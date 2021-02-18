@@ -9,8 +9,8 @@ function SpaceList() {
         records: [],
 
         // add space
-        addSpace: function(id, polygon) {
-            this.records.push({space: {id, polygon}, delegatorId: null, restrictions: []});
+        addSpace: function(id, boundary) {
+            this.records.push({space: {id, boundary}, delegation: null, restrictions: []});
         },
         
         // add restriction
@@ -45,14 +45,14 @@ function SpaceList() {
         },
 
         // add delegation
-        addDelegation: function(spaceId, delegatorId) {
+        addDelegation: function(spaceId, delegatorId, delegatorAddress) {
             var recordId = this.getRecordId(spaceId);
             if (recordId < 0) {
                 console.log("Error", "[SpaceList.addDelegation] space not found in the list!");
                 return false;
             }
 
-            this.records[recordId].delegatorId = delegatorId;
+            this.records[recordId].delegation = {id: delegatorId, address: delegatorAddress};
             return true;
         },
 
@@ -64,7 +64,7 @@ function SpaceList() {
                 return false;
             }
 
-            this.records[recordId].delegatorId = null;
+            this.records[recordId].delegation = null;
             return true;
         },
 

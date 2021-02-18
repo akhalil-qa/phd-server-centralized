@@ -1,7 +1,7 @@
 /**
  ** Root Space Authority List Object
  ** This is a public list that include rquired details of root space authorities such as:
- ** id | publicKey | spaces (id | polygon)
+ ** id | address | publicKey | spaces (id | boundary)
  ** A mobile device must retrieve this list and hard-code it into the ROM of the device.
  **/
 const Constants = require("./Constants");

@@ -20,8 +20,8 @@ function SpaceAuthority(id) {
         },
 
         // register space in the Space List
-        registerSpace: function (id, polygon) {
-            this.spaceList.addSpace(id, polygon);
+        registerSpace: function (id, boundary) {
+            this.spaceList.addSpace(id, boundary);
         },
 
         // enforce restriction to a space
@@ -35,8 +35,8 @@ function SpaceAuthority(id) {
         },
 
         // delegate a space to another space authority
-        assignDelegation: function(spaceId, delegatorId) {
-            return this.spaceList.addDelegation(spaceId, delegatorId);
+        assignDelegation: function(spaceId, delegatorId, delegatorAddress) {
+            return this.spaceList.addDelegation(spaceId, delegatorId, delegatorAddress);
         },
 
         // revoke previously assigned delegation
