@@ -10,7 +10,7 @@ const Constants = require("./Constants");
 function SpaceAuthority(id) {
     return {
         id: id,
-        address: Constants.WEB_SERVER.BASE_URL + ":" + Constants.WEB_SERVER.PORT + "/authority/" + id,
+        address: Constants.WEB_SERVER.BASE_URL + "/authority/" + id,
         rsaKeyPair: {publicKey: null, privateKey: null},
         spaceList: new SpaceList(),
 
