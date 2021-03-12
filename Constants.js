@@ -3,14 +3,6 @@
  *** Include all constants and global variables.
  **/
 const Constants = {
-    // TODO: continue the list based on android available permissions
-    PERMISSIONS: {
-        CAMERA: "camera",
-        MICROPHONE: "RECORD_AUDIO",
-        WIFI: "wifi",
-        CONTACTS: "contacts",
-        CALL: "call"
-    },
 
     WEB_SERVER: {
         BASE_URL: "https://hidden-garden-57594.herokuapp.com",

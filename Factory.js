@@ -13,8 +13,8 @@ function Factory() {
             var spaceAuthority4 = new SpaceAuthority("SpaceAuthority4");
             spaceAuthority4.generateRsaKeyPair("sa4_password");
             spaceAuthority4.registerSpace("Space4", [[2,2,0], [4,2,0], [4,4,0], [2,4,0], [2,2,0]]);
-            spaceAuthority4.enforceRestriction("Space4", Constants.PERMISSIONS.CAMERA, "snapchat");
-            spaceAuthority4.enforceRestriction("Space4", Constants.PERMISSIONS.MICROPHONE, "snapchat");
+            spaceAuthority4.enforceRestriction("Space4", "CAMERA", "com.snapchat.android");
+            spaceAuthority4.enforceRestriction("Space4", "RECORD_AUDIO", "com.snapchat.android");
 
             // SpaceAuthority1
             var spaceAuthority1 = new SpaceAuthority("SpaceAuthority1");
@@ -22,14 +22,14 @@ function Factory() {
             spaceAuthority1.registerSpace("Space1", [[1,1,0], [6,1,0], [7,4,0], [1,5,0], [1,1,0]]);
             spaceAuthority1.registerSpace("Space4", [[2,2,0], [4,2,0], [4,4,0], [2,4,0], [2,2,0]]);
             spaceAuthority1.assignDelegation("Space4", "SpaceAuthority4", spaceAuthority4.address);
-            spaceAuthority1.enforceRestriction("Space1", Constants.PERMISSIONS.CAMERA, "twitter");
-            spaceAuthority1.enforceRestriction("Space1", Constants.PERMISSIONS.MICROPHONE, "snapchat");
+            spaceAuthority1.enforceRestriction("Space1", "CAMERA", "com.twitter.android");
+            spaceAuthority1.enforceRestriction("Space1", "RECORD_AUDIO", "com.snapchat.android");
 
             // spaceAuthority6
             var spaceAuthority6 = new SpaceAuthority("SpaceAuthority6");
             spaceAuthority6.generateRsaKeyPair("sa6_password");
             spaceAuthority6.registerSpace("Space6", [[6,10,0], [7,10,0], [7,11,0], [6,11,0], [6,10,0]]);
-            spaceAuthority6.enforceRestriction("Space6", Constants.PERMISSIONS.CALL, "snapchat");
+            spaceAuthority6.enforceRestriction("Space6", "CALL_PHONE", "com.android.dialer");
 
             // spaceAuthority5
             var spaceAuthority5 = new SpaceAuthority("SpaceAuthority5");
@@ -37,9 +37,8 @@ function Factory() {
             spaceAuthority5.registerSpace("Space5", [[3,12,0], [8,12,0], [8,8,0], [3,12,0]]);
             spaceAuthority5.registerSpace("Space6", [[6,10,0], [7,10,0], [7,11,0], [6,11,0], [6,10,0]]);
             spaceAuthority5.assignDelegation("Space6", "SpaceAuthority6", spaceAuthority6.address);
-            spaceAuthority5.enforceRestriction("Space5", Constants.PERMISSIONS.WIFI, "snapchat");
-            spaceAuthority5.enforceRestriction("Space5", Constants.PERMISSIONS.WIFI, "twitter");
-            spaceAuthority5.enforceRestriction("Space5", Constants.PERMISSIONS.CALL, "whatsapp");
+            spaceAuthority5.enforceRestriction("Space5", "SEND_SMS", "com.android.messaging");
+            spaceAuthority5.enforceRestriction("Space5", "RECEIVE_SMS", "com.android.messaging");
 
             // SpaceAuthority2
             var spaceAuthority2 = new SpaceAuthority("SpaceAuthority2");
@@ -48,8 +47,9 @@ function Factory() {
             spaceAuthority2.registerSpace("Space7", [[8,17,0], [12,17,0], [12,13,0], [8,17,0]]);
             spaceAuthority2.registerSpace("Space5", [[3,12,0], [8,12,0], [8,8,0], [3,12,0]]);
             spaceAuthority2.assignDelegation("Space5", "SpaceAuthority5", spaceAuthority5.address);
-            spaceAuthority2.enforceRestriction("Space2", Constants.PERMISSIONS.MICROPHONE, "snapchat");
-            spaceAuthority2.enforceRestriction("Space7", Constants.PERMISSIONS.WIFI, "chrome");
+            spaceAuthority2.enforceRestriction("Space2", "RECORD_AUDIO", "com.snapchat.android");
+            spaceAuthority2.enforceRestriction("Space7", "ACCESS_FINE_LOCATION", "com.twitter.android");
+            spaceAuthority2.enforceRestriction("Space7", "ACCESS_COARSE_LOCATION", "com.twitter.android");
             
             // spaceAuthority3
             var spaceAuthority3 = new SpaceAuthority("SpaceAuthority3");
