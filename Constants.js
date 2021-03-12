@@ -6,7 +6,7 @@ const Constants = {
     // TODO: continue the list based on android available permissions
     PERMISSIONS: {
         CAMERA: "camera",
-        MICROPHONE: "microphone",
+        MICROPHONE: "RECORD_AUDIO",
         WIFI: "wifi",
         CONTACTS: "contacts",
         CALL: "call"

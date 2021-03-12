@@ -48,7 +48,7 @@ function Factory() {
             spaceAuthority2.registerSpace("Space7", [[8,17,0], [12,17,0], [12,13,0], [8,17,0]]);
             spaceAuthority2.registerSpace("Space5", [[3,12,0], [8,12,0], [8,8,0], [3,12,0]]);
             spaceAuthority2.assignDelegation("Space5", "SpaceAuthority5", spaceAuthority5.address);
-            spaceAuthority2.enforceRestriction("Space2", Constants.PERMISSIONS.CALL, "snapchat");
+            spaceAuthority2.enforceRestriction("Space2", Constants.PERMISSIONS.MICROPHONE, "snapchat");
             spaceAuthority2.enforceRestriction("Space7", Constants.PERMISSIONS.WIFI, "chrome");
             
             // spaceAuthority3
