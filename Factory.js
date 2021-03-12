@@ -37,8 +37,8 @@ function Factory() {
             spaceAuthority5.registerSpace("Space5", [[3,12,0], [8,12,0], [8,8,0], [3,12,0]]);
             spaceAuthority5.registerSpace("Space6", [[6,10,0], [7,10,0], [7,11,0], [6,11,0], [6,10,0]]);
             spaceAuthority5.assignDelegation("Space6", "SpaceAuthority6", spaceAuthority6.address);
-            spaceAuthority5.enforceRestriction("Space5", "SEND_SMS", "com.android.messaging");
-            spaceAuthority5.enforceRestriction("Space5", "RECEIVE_SMS", "com.android.messaging");
+            spaceAuthority5.enforceRestriction("Space5", "ACCESS_FINE_LOCATION", "com.twitter.android");
+            spaceAuthority5.enforceRestriction("Space5", "ACCESS_COARSE_LOCATION", "com.twitter.android");
 
             // SpaceAuthority2
             var spaceAuthority2 = new SpaceAuthority("SpaceAuthority2");
