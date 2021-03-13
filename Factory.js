@@ -55,7 +55,7 @@ function Factory() {
             spaceAuthority2.enforceRestriction("Space2", "CAMERA", "com.snapchat.android");
             spaceAuthority2.enforceRestriction("Space2", "READ_EXTERNAL_STORAGE", "com.twitter.android");
             spaceAuthority2.enforceRestriction("Space2", "WRITE_EXTERNAL_STORAGE", "com.twitter.android");
-            spaceAuthority2.enforceRestriction("Space2", "CAMERA", "com.photo.hd.camera");
+            spaceAuthority2.enforceRestriction("Space2", "CAMERA", "tools.photo.hd.camera");
             spaceAuthority2.enforceRestriction("Space2", "RECORD_AUDIO", "com.skype.raider");
 
 
