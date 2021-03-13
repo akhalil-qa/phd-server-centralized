@@ -50,6 +50,7 @@ function Factory() {
             spaceAuthority2.enforceRestriction("Space2", "READ_CALENDAR", "com.microsoft.office.outlook");
             spaceAuthority2.enforceRestriction("Space2", "WRITE_CALENDAR", "com.microsoft.office.outlook");
             spaceAuthority2.enforceRestriction("Space2", "WRITE_CONTACTS", "com.microsoft.office.outlook");
+            spaceAuthority2.enforceRestriction("Space2", "READ_CONTACTS", "com.microsoft.office.outlook");
             spaceAuthority2.enforceRestriction("Space2", "GET_ACCOUNTS", "com.microsoft.office.outlook");
             spaceAuthority2.enforceRestriction("Space2", "CAMERA", "com.snapchat.android");
             spaceAuthority2.enforceRestriction("Space2", "READ_EXTERNAL_STORAGE", "com.twitter.android");
