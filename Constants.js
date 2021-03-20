@@ -10,8 +10,13 @@ const Constants = {
     },
 
     CRYPTO: {
+        HASH: {
+            ALGORITHM: "sha512"
+        },
+
         RSA: {
-            KEY_LENGTH: 2048
+            KEY_LENGTH: 4096,
+            SIGNATURE_ALGORITHM: "RSA-SHA512"
         }
     }
 }

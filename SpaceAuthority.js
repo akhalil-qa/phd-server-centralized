@@ -14,9 +14,9 @@ function SpaceAuthority(id) {
         rsaKeyPair: {publicKey: null, privateKey: null},
         spaceList: new SpaceList(),
 
-        // generate rsa keys (public key and private key) using a password
-        generateRsaKeyPair: function(password) {
-            this.rsaKeyPair = Crypto.Rsa.generateKeyPair(password);
+        // generate rsa key pairs (public key and private key)
+        generateRsaKeyPair: function() {
+            this.rsaKeyPair = Crypto.Rsa.generateKeyPair();
         },
 
         // register space in the Space List
@@ -69,7 +69,6 @@ function SpaceAuthority(id) {
                 publicKey: this.rsaKeyPair.publicKey,
                 spaceListRecords: this.spaceList.getList(),
                 challenge: challenge,
-                // TODO
                 signature: Crypto.Rsa.sign(JSON.stringify({spaceList: this.spaceList.getList(), challenge}), this.rsaKeyPair.privateKey)
             };
             

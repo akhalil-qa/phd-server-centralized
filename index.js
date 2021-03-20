@@ -31,6 +31,22 @@ app.get("/authority/:id/:challenge", (req, res) => {
     res.send(spaceAuthority.getSignedDetails(challenge));
 });
 
+// TODO: to be removed
+app.get("/test", (req, res) => {
+    var testSA = new SpaceAuthority("testSA");
+    testSA.generateRsaKeyPair();
+
+    var message = "AHMED";
+    var signature = Crypto.Rsa.sign(message, testSA.rsaKeyPair.privateKey);
+
+    res.send({
+        message: message,
+        signature: signature,
+        publicKey: testSA.rsaKeyPair.publicKey,
+        privateKey: testSA.rsaKeyPair.privateKey
+    });
+});
+
 // open web server port
 const port = process.env.PORT || Constants.WEB_SERVER.PORT;
 app.listen(port, () => {console.log(`Listening in port ${port}`)});
