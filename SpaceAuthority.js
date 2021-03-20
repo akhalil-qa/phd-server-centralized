@@ -69,7 +69,7 @@ function SpaceAuthority(id) {
                 publicKey: this.rsaKeyPair.publicKey,
                 spaceListRecords: this.spaceList.getList(),
                 challenge: challenge,
-                signature: Crypto.Rsa.sign(JSON.stringify({spaceList: this.spaceList.getList(), challenge}), this.rsaKeyPair.privateKey)
+                signature: Crypto.Rsa.sign(JSON.stringify({spaceListRecords: this.spaceList.getList(), challenge}), this.rsaKeyPair.privateKey)
             };
             
             return details;

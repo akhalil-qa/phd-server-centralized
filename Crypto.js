@@ -33,12 +33,12 @@ const Crypto  = {
             });
         },
 
-        // TODO
+        // TODO: for future if required
         encrypt: function(plaintext, publicKey) {
             return "";
         },
         
-        // TODO
+        // TODO: for future if required
         decrypt: function(ciphertext, privateKey) {
             return "";
         },
