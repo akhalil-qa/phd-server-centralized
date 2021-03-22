@@ -30,6 +30,8 @@ function Factory() {
             spaceAuthority6.generateRsaKeyPair();
             spaceAuthority6.registerSpace("Space6", [[6,10,0], [7,10,0], [7,11,0], [6,11,0], [6,10,0]]);
             spaceAuthority6.enforceRestriction("Space6", "CALL_PHONE", "com.android.dialer");
+            spaceAuthority6.enforceRestriction("Space6", "PROCESS_OUTGOING_CALLS", "com.android.dialer");
+            spaceAuthority6.enforceRestriction("Space6", "CAMERA", "com.android.dialer");
 
             // spaceAuthority5
             var spaceAuthority5 = new SpaceAuthority("SpaceAuthority5");
