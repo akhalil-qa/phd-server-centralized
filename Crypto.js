@@ -32,17 +32,7 @@ const Crypto  = {
                 }
             });
         },
-
-        // TODO: for future if required
-        encrypt: function(plaintext, publicKey) {
-            return "";
-        },
-        
-        // TODO: for future if required
-        decrypt: function(ciphertext, privateKey) {
-            return "";
-        },
-
+    
         // generate signature in a base64 format
         sign: function(message, privateKey) {
             var signer = crypto.createSign(Constants.CRYPTO.RSA.SIGNATURE_ALGORITHM);
