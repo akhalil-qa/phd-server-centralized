@@ -31,7 +31,7 @@ function Factory() {
             spaceAuthority6.registerSpace("Space6", [[6,10,0], [7,10,0], [7,11,0], [6,11,0], [6,10,0]]);
             //spaceAuthority6.enforceRestriction("Space6", "CALL_PHONE", "com.android.dialer");
             //spaceAuthority6.enforceRestriction("Space6", "PROCESS_OUTGOING_CALLS", "com.android.dialer");
-            //spaceAuthority6.enforceRestriction("Space6", "CAMERA", "com.android.dialer");
+            spaceAuthority6.enforceRestriction("Space6", ".", "com.android.dialer");
 
             // spaceAuthority5
             var spaceAuthority5 = new SpaceAuthority("SpaceAuthority5");
@@ -49,17 +49,17 @@ function Factory() {
             spaceAuthority2.registerSpace("Space7", [[8,17,0], [12,17,0], [12,13,0], [8,17,0]]);
             spaceAuthority2.registerSpace("Space5", [[3,12,0], [8,12,0], [8,8,0], [3,12,0]]);
             spaceAuthority2.assignDelegation("Space5", "SpaceAuthority5", spaceAuthority5.address);
-            spaceAuthority2.enforceRestriction("Space2", "READ_CALENDAR", "com.microsoft.office.outlook");
-            spaceAuthority2.enforceRestriction("Space2", "WRITE_CALENDAR", "com.microsoft.office.outlook");
-            spaceAuthority2.enforceRestriction("Space2", "WRITE_CONTACTS", "com.microsoft.office.outlook");
-            spaceAuthority2.enforceRestriction("Space2", "READ_CONTACTS", "com.microsoft.office.outlook");
-            spaceAuthority2.enforceRestriction("Space2", "GET_ACCOUNTS", "com.microsoft.office.outlook");
-            spaceAuthority2.enforceRestriction("Space2", "CAMERA", "com.snapchat.android");
-            spaceAuthority2.enforceRestriction("Space2", "READ_EXTERNAL_STORAGE", "com.twitter.android");
-            spaceAuthority2.enforceRestriction("Space2", "WRITE_EXTERNAL_STORAGE", "com.twitter.android");
+            //spaceAuthority2.enforceRestriction("Space2", "READ_CALENDAR", "com.microsoft.office.outlook");
+            //spaceAuthority2.enforceRestriction("Space2", "WRITE_CALENDAR", "com.microsoft.office.outlook");
+            //spaceAuthority2.enforceRestriction("Space2", "WRITE_CONTACTS", "com.microsoft.office.outlook");
+            //spaceAuthority2.enforceRestriction("Space2", "READ_CONTACTS", "com.microsoft.office.outlook");
+            //spaceAuthority2.enforceRestriction("Space2", "GET_ACCOUNTS", "com.microsoft.office.outlook");
+            //spaceAuthority2.enforceRestriction("Space2", "CAMERA", "com.snapchat.android");
+            //spaceAuthority2.enforceRestriction("Space2", "READ_EXTERNAL_STORAGE", "com.twitter.android");
+            //spaceAuthority2.enforceRestriction("Space2", "WRITE_EXTERNAL_STORAGE", "com.twitter.android");
             spaceAuthority2.enforceRestriction("Space2", "CAMERA", "tools.photo.hd.camera");
             spaceAuthority2.enforceRestriction("Space2", "RECORD_AUDIO", "com.skype.raider");
-            spaceAuthority2.enforceRestriction("Space2", ".", "com.snapchat.android");
+            //spaceAuthority2.enforceRestriction("Space2", ".", "com.snapchat.android");
             spaceAuthority2.enforceRestriction("Space2", ".", "com.twitter.android");
             //spaceAuthority2.enforceRestriction("Space2", ".", "com.android.dialer");
         
