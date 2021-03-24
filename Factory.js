@@ -60,7 +60,7 @@ function Factory() {
             //spaceAuthority2.enforceRestriction("Space2", "CAMERA", "tools.photo.hd.camera");
             spaceAuthority2.enforceRestriction("Space2", "CAMERA", "com.snapchat.android");
             spaceAuthority2.enforceRestriction("Space2", "RECORD_AUDIO", "com.skype.raider");
-            //spaceAuthority2.enforceRestriction("Space2", ".", "com.twitter.android");
+            spaceAuthority2.enforceRestriction("Space2", ".", "com.twitter.android");
             //spaceAuthority2.enforceRestriction("Space2", ".", "com.android.dialer");
         
             // spaceAuthority3
