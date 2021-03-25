@@ -8,7 +8,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 
 // connect to the database
-mongoose.connect(Constants.DATABASE.URL, {useNewUrlParser: true})
+mongoose.connect(Constants.DATABASE.URL_CLOUD, {useNewUrlParser: true})
     .then(() => console.log("Connected to database."))
     .catch(err => console.error("Coluld not connect to database.", err));
 
@@ -59,7 +59,7 @@ const CertificateAuthorityRecord = mongoose.model("CertificateAuthorityRecord", 
 
 
 //deleteAuthorities();
-//populateDatabase();
+populateDatabase();
 
 // server keys
 var keyPair = {};
@@ -321,11 +321,6 @@ async function getDatabase() {
 // initialize web server
 const app = express();
 app.use(express.json());
-
-// test
-app.get("/test", (req, res) => {
-    res.send("HI");
-});
 
 // generate key pair
 app.get("/generateKeyPair", (req, res) => {

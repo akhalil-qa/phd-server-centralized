@@ -11,7 +11,8 @@ const Constants = {
     },
 
     DATABASE: {
-        URL: "mongodb://localhost/spacemanager"
+        URL_LOCAL: "mongodb://localhost/spacemanager",
+        URL_CLOUD: "mongodb+srv://admin:admin@spacemanagercluster.qypnu.mongodb.net/spacemanager?retryWrites=true&w=majority"
     },
 
     CRYPTO: {
