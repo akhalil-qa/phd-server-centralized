@@ -5,8 +5,13 @@
 const Constants = {
 
     WEB_SERVER: {
+        NAME: "server",
         BASE_URL: "https://hidden-garden-57594.herokuapp.com",
-        PORT: 5000
+        PORT: 4444
+    },
+
+    DATABASE: {
+        URL: "mongodb://localhost/spacemanager"
     },
 
     CRYPTO: {
