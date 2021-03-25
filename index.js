@@ -1,4 +1,3 @@
-// TODO: shift the database to the cloud
 // TODO: compress the database before sending
 // TODO: develop the ui for the server side
 
