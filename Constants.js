@@ -1,7 +1,4 @@
-/**
- *** Constants
- *** Include all constants and global variables.
- **/
+
 const Constants = {
 
     WEB_SERVER: {

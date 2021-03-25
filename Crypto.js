@@ -1,7 +1,4 @@
-/**
- *** Crypto
- *** Include all cryptographic operations.
- **/
+
 const Constants = require("./Constants");
 const crypto = require("crypto");
 

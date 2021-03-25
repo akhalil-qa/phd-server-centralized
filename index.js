@@ -1,5 +1,6 @@
 // TODO: compress the database before sending
 // TODO: develop the ui for the server side
+// TODO: sign the updates send by space authority to the server
 
 const Constants = require("./Constants");
 const Crypto = require("./Crypto");
@@ -42,7 +43,7 @@ const authoritySchema = new mongoose.Schema({
     id: String,
     spaceList: [spaceListRecordSchema],
     signature: String,
-    updateDate: Date
+    timestamp: String
 });
 
 // database schema: certificate authority
@@ -55,7 +56,6 @@ const certificateAuthoritySchema = new mongoose.Schema({
 // database models
 const Authority = mongoose.model("Authority", authoritySchema);
 const CertificateAuthorityRecord = mongoose.model("CertificateAuthorityRecord", certificateAuthoritySchema);
-
 
 //deleteAuthorities();
 //populateDatabase();
@@ -185,7 +185,7 @@ async function addAuthority(id) {
         id: id,
         spaceList: [],
         signature: null,
-        updateDate: Date.now()
+        timestamp: new Date().getTime()
     });
     await authority.save();
     console.log("Authority " + id + " added");
@@ -207,7 +207,7 @@ async function addSpace(authorityId, id, signature) {
         restrcitions: []
     });
     authority.signature = signature;
-    authority.updateDate = Date.now();
+    authority.timestamp = new Date().getTime();
 
     const result = await authority.save();
     console.log(authorityId + " added " + id);
@@ -220,7 +220,7 @@ async function addCoordinate(authorityId, spaceId, x, y, z, signature) {
         if (authority.spaceList[i].space.id == spaceId) {
             authority.spaceList[i].space.boundary.push({x: x, y: y, z: z});
             authority.signature = signature;
-            authority.updateDate = Date.now();
+            authority.timestamp = Date.now();
 
             await authority.save();
             console.log("Coordinate [" + x + "," + y + "," + z + "] added to " + spaceId);
@@ -236,7 +236,7 @@ async function addDelegation(authorityId, spaceId, delegatorId, signature) {
         if (authority.spaceList[i].space.id == spaceId) {
             authority.spaceList[i].delegation = delegatorId;
             authority.signature = signature;
-            authority.updateDate = Date.now();
+            authority.timestamp = Date.now();
 
             await authority.save();
             console.log(authorityId + " delegated " + spaceId + " to " + delegatorId);
@@ -252,7 +252,7 @@ async function removeDelegation(authorityId, spaceId, signature) {
         if (authority.spaceList[i].space.id == spaceId) {
             authority.spaceList[i].delegation = null;
             authority.signature = signature;
-            authority.updateDate = Date.now();
+            authority.timestamp = Date.now();
 
             await authority.save();
             console.log(authorityId + " removed delegation of " + spaceId);
@@ -271,7 +271,7 @@ async function addRestriction(authorityId, spaceId, permission, appId, signature
                 appId: appId
             });
             authority.signature = signature;
-            authority.updateDate = Date.now();
+            authority.timestamp = Date.now();
 
             await authority.save();
             console.log(authorityId + " added restrction [" + permission + "|" + appId + "] in " + spaceId);
@@ -300,7 +300,7 @@ async function removeRestriction(authorityId, spaceId, permission, appId, signat
                     authority.spaceList[i].restrcitions[j].appId == appId) {
                         authority.spaceList[i].restrcitions.splice(j, 1);
                         authority.signature = signature;
-                        authority.updateDate = Date.now();
+                        authority.timestamp = Date.now();
 
                         await authority.save();
                         console.log(authorityId + " removed restrction [" + permission + "|" + appId + "] in " + spaceId);
@@ -311,8 +311,8 @@ async function removeRestriction(authorityId, spaceId, permission, appId, signat
     }
 }
 
-async function getDatabase() {
-    const authorities = await Authority.find();
+async function getDatabase(timestamp) {
+    const authorities = await Authority.find({timestamp: {$gt: timestamp}});
     const signature = Crypto.Rsa.sign(authorities.toString(), keyPair.privateKey);
     return {authorities: authorities, signature: signature};
 }
@@ -327,8 +327,8 @@ app.get("/generateKeyPair", (req, res) => {
 });
 
 // get database
-app.get("/getDatabase", (req, res) => {
-    getDatabase().then((authorities) => {
+app.get("/getDatabase/:timestamp", (req, res) => {
+    getDatabase(req.params.timestamp).then((authorities) => {
         res.send(authorities);
     });
 });
