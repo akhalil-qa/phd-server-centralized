@@ -322,6 +322,11 @@ async function getDatabase() {
 const app = express();
 app.use(express.json());
 
+// test
+app.get("/test", (req, res) => {
+    res.send("HI");
+});
+
 // generate key pair
 app.get("/generateKeyPair", (req, res) => {
     res.send(generateKeyPair());
