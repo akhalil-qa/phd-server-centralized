@@ -58,7 +58,7 @@ const CertificateAuthorityRecord = mongoose.model("CertificateAuthorityRecord", 
 
 
 //deleteAuthorities();
-populateDatabase();
+//populateDatabase();
 
 // server keys
 var keyPair = {};
