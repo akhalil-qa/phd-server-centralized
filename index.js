@@ -203,7 +203,7 @@ async function addSpace(authorityId, id, signature) {
             id: id,
             boundary: []
         },
-        delegation: null,
+        delegator: null,
         restrcitions: []
     });
     authority.signature = signature;
