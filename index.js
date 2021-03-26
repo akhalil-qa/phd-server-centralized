@@ -57,8 +57,8 @@ const certificateAuthoritySchema = new mongoose.Schema({
 const Authority = mongoose.model("Authority", authoritySchema);
 const CertificateAuthorityRecord = mongoose.model("CertificateAuthorityRecord", certificateAuthoritySchema);
 
-//deleteAuthorities();
-populateDatabase();
+deleteAuthorities()
+//populateDatabase();
 
 // server keys
 var keyPair = {};
@@ -72,7 +72,7 @@ getCertificateAuthorityRecord(Constants.WEB_SERVER.NAME).then((record) => {
     }
 });
 
-function populateDatabase() {
+async function populateDatabase() {
     const sa1 = "Space Authority 1";
     const sa2 = "Space Authority 2";
     const sa3 = "Space Authority 3";
@@ -89,77 +89,77 @@ function populateDatabase() {
     const s7 = "Space 7";
 
     // Space Authority 1
-    addAuthority(sa1);
-    addSpace(sa1, s1, "");
-    addCoordinate(sa1, s1, 1, 1, 0, "");
-    addCoordinate(sa1, s1, 6, 1, 0, "");
-    addCoordinate(sa1, s1, 7, 4, 0, "");
-    addCoordinate(sa1, s1, 1, 5, 0, "");
-    addCoordinate(sa1, s1, 1, 1, 0, "");
-    addRestriction(sa1, s1, "RECORD_AUDIO", "com.skype.raider", "");
-    addRestriction(sa1, s1, ".", "com.twitter.android", "");
+    await addAuthority(sa1);
+    await addSpace(sa1, s1, "");
+    await addCoordinate(sa1, s1, 1, 1, 0, "");
+    await addCoordinate(sa1, s1, 6, 1, 0, "");
+    await addCoordinate(sa1, s1, 7, 4, 0, "");
+    await addCoordinate(sa1, s1, 1, 5, 0, "");
+    await addCoordinate(sa1, s1, 1, 1, 0, "");
+    await addRestriction(sa1, s1, "RECORD_AUDIO", "com.skype.raider", "");
+    await addRestriction(sa1, s1, ".", "com.twitter.android", "");
 
     // Space Authority 2
-    addAuthority(sa2);
-    addSpace(sa2, s2, "");
-    addCoordinate(sa2, s2, 1, 9, 0, "");
-    addCoordinate(sa2, s2, 9, 6, 0, "");
-    addCoordinate(sa2, s2, 9, 13, 0, "");
-    addCoordinate(sa2, s2, 4, 14, 0, "");
-    addCoordinate(sa2, s2, 4, 16, 0, "");
-    addCoordinate(sa2, s2, 1, 16, 0, "");
-    addCoordinate(sa2, s2, 1, 9, 0, "");
-    addSpace(sa2, s7, "");
-    addCoordinate(sa2, s7, 8, 17, 0, "");
-    addCoordinate(sa2, s7, 12, 17, 0, "");
-    addCoordinate(sa2, s7, 12, 13, 0, "");
-    addCoordinate(sa2, s7, 8, 17, 0, "");
-    addSpace(sa5, s2, "");
-    addCoordinate(sa2, s5, 3, 12, 0, "");
-    addCoordinate(sa2, s5, 8, 12, 0, "");
-    addCoordinate(sa2, s5, 8, 8, 0, "");
-    addCoordinate(sa2, s5, 3, 12, 0, "");
-    addDelegator(sa2, s5, s5, "");
+    await addAuthority(sa2);
+    await addSpace(sa2, s2, "");
+    await addCoordinate(sa2, s2, 1, 9, 0, "");
+    await addCoordinate(sa2, s2, 9, 6, 0, "");
+    await addCoordinate(sa2, s2, 9, 13, 0, "");
+    await addCoordinate(sa2, s2, 4, 14, 0, "");
+    await addCoordinate(sa2, s2, 4, 16, 0, "");
+    await addCoordinate(sa2, s2, 1, 16, 0, "");
+    await addCoordinate(sa2, s2, 1, 9, 0, "");
+    await addSpace(sa2, s7, "");
+    await addCoordinate(sa2, s7, 8, 17, 0, "");
+    await addCoordinate(sa2, s7, 12, 17, 0, "");
+    await addCoordinate(sa2, s7, 12, 13, 0, "");
+    await addCoordinate(sa2, s7, 8, 17, 0, "");
+    await addSpace(sa2, s5, "");
+    await addCoordinate(sa2, s5, 3, 12, 0, "");
+    await addCoordinate(sa2, s5, 8, 12, 0, "");
+    await addCoordinate(sa2, s5, 8, 8, 0, "");
+    await addCoordinate(sa2, s5, 3, 12, 0, "");
+    await addDelegator(sa2, s5, sa5, "");
 
     // Space Authority 3
-    addAuthority(sa3);
-    addSpace(sa3, s3, "");
-    addCoordinate(sa3, s3, 8, 1, 0, "");
-    addCoordinate(sa3, s3, 11, 1, 0, "");
-    addCoordinate(sa3, s3, 11, 4, 0, "");
-    addCoordinate(sa3, s3, 10, 3, 0, "");
-    addCoordinate(sa3, s3, 8, 5, 0, "");
-    addCoordinate(sa3, s3, 8, 1, 0, "");
+    await addAuthority(sa3);
+    await addSpace(sa3, s3, "");
+    await addCoordinate(sa3, s3, 8, 1, 0, "");
+    await addCoordinate(sa3, s3, 11, 1, 0, "");
+    await addCoordinate(sa3, s3, 11, 4, 0, "");
+    await addCoordinate(sa3, s3, 10, 3, 0, "");
+    await addCoordinate(sa3, s3, 8, 5, 0, "");
+    await addCoordinate(sa3, s3, 8, 1, 0, "");
 
     // Space Authority 4
-    addAuthority(sa4);
-    addSpace(sa4, s4, "");
-    addCoordinate(sa4, s4, 2, 2, 0, "");
-    addCoordinate(sa4, s4, 4, 2, 0, "");
-    addCoordinate(sa4, s4, 4, 4, 0, "");
-    addCoordinate(sa4, s4, 2, 4, 0, "");
-    addCoordinate(sa4, s4, 2, 2, 0, "");
-    addRestriction(sa4, s4, "CAMERA", "com.snapchat.android", "");
-    addRestriction(sa4, s4, "RECORD_AUDIO", "com.snapchat.android", "");
+    await addAuthority(sa4);
+    await addSpace(sa4, s4, "");
+    await addCoordinate(sa4, s4, 2, 2, 0, "");
+    await addCoordinate(sa4, s4, 4, 2, 0, "");
+    await addCoordinate(sa4, s4, 4, 4, 0, "");
+    await addCoordinate(sa4, s4, 2, 4, 0, "");
+    await addCoordinate(sa4, s4, 2, 2, 0, "");
+    await addRestriction(sa4, s4, "CAMERA", "com.snapchat.android", "");
+    await addRestriction(sa4, s4, "RECORD_AUDIO", "com.snapchat.android", "");
 
     // Space Authority 5
-    addAuthority(sa5);
-    addSpace(sa5, s5, "");
-    addCoordinate(sa5, s5, 3, 12, 0, "");
-    addCoordinate(sa5, s5, 8, 12, 0, "");
-    addCoordinate(sa5, s5, 8, 8, 0, "");
-    addCoordinate(sa5, s5, 3, 12, 0, "");
-    addRestriction(sa5, s5, "ACCESS_FINE_LOCATION", "com.twitter.android", "");
-    addRestriction(sa5, s5, "ACCESS_COARSE_LOCATION", "com.twitter.android", "");
+    await addAuthority(sa5);
+    await addSpace(sa5, s5, "");
+    await addCoordinate(sa5, s5, 3, 12, 0, "");
+    await addCoordinate(sa5, s5, 8, 12, 0, "");
+    await addCoordinate(sa5, s5, 8, 8, 0, "");
+    await addCoordinate(sa5, s5, 3, 12, 0, "");
+    await addRestriction(sa5, s5, "ACCESS_FINE_LOCATION", "com.twitter.android", "");
+    await addRestriction(sa5, s5, "ACCESS_COARSE_LOCATION", "com.twitter.android", "");
 
     // Space Authority 6
-    addAuthority(sa6);
-    addSpace(sa6, s6, "");
-    addCoordinate(sa6, s6, 6, 10, 0, "");
-    addCoordinate(sa6, s6, 7, 10, 0, "");
-    addCoordinate(sa6, s6, 7, 11, 0, "");
-    addCoordinate(sa6, s6, 6, 11, 0, "");
-    addCoordinate(sa6, s6, 6, 10, 0, "");
+    await addAuthority(sa6);
+    await addSpace(sa6, s6, "");
+    await addCoordinate(sa6, s6, 6, 10, 0, "");
+    await addCoordinate(sa6, s6, 7, 10, 0, "");
+    await addCoordinate(sa6, s6, 7, 11, 0, "");
+    await addCoordinate(sa6, s6, 6, 11, 0, "");
+    await addCoordinate(sa6, s6, 6, 10, 0, "");
 }
 
 function generateKeyPair() {
@@ -213,17 +213,17 @@ async function addSpace(authorityId, id, signature) {
     console.log(authorityId + " added " + id);
 }
 
-async function addCoordinate(authorityId, spaceId, x, y, z, signature) {
+async function addCoordinate(authorityId, spaceId, latitude, longitude, altitude, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
     for (var i = 0; i < authority.spaceList.length; i++) {
         if (authority.spaceList[i].space.id == spaceId) {
-            authority.spaceList[i].space.boundary.push({x: x, y: y, z: z});
+            authority.spaceList[i].space.boundary.push({latitude: latitude, longitude: longitude, altitude: altitude});
             authority.signature = signature;
-            authority.timestamp = Date.now();
+            authority.timestamp = new Date().getTime();
 
             await authority.save();
-            console.log("Coordinate [" + x + "," + y + "," + z + "] added to " + spaceId);
+            console.log("Coordinate [" + latitude + "," + longitude + "," + altitude + "] added to " + spaceId);
             return;
         }
     }
@@ -236,7 +236,7 @@ async function addDelegator(authorityId, spaceId, delegatorId, signature) {
         if (authority.spaceList[i].space.id == spaceId) {
             authority.spaceList[i].delegator = delegatorId;
             authority.signature = signature;
-            authority.timestamp = Date.now();
+            authority.timestamp = new Date().getTime();
 
             await authority.save();
             console.log(authorityId + " delegated " + spaceId + " to " + delegatorId);
@@ -252,7 +252,7 @@ async function removeDelegator(authorityId, spaceId, signature) {
         if (authority.spaceList[i].space.id == spaceId) {
             authority.spaceList[i].delegator = null;
             authority.signature = signature;
-            authority.timestamp = Date.now();
+            authority.timestamp = new Date().getTime();
 
             await authority.save();
             console.log(authorityId + " removed delegation of " + spaceId);
@@ -271,23 +271,13 @@ async function addRestriction(authorityId, spaceId, permission, appId, signature
                 appId: appId
             });
             authority.signature = signature;
-            authority.timestamp = Date.now();
+            authority.timestamp = new Date().getTime();
 
             await authority.save();
-            console.log(authorityId + " added restrction [" + permission + "|" + appId + "] in " + spaceId);
+            console.log(authorityId + " added restriction [" + permission + "|" + appId + "] in " + spaceId);
             return;
         }
     }
-    authority.spaceList.push({
-        space: {
-            id: id,
-            boundary: boundary
-        },
-        delegator: null,
-        restrictions: []
-    });
-    const result = await authority.save();
-    console.log(authorityId + " added " + id);
 }
 
 async function removeRestriction(authorityId, spaceId, permission, appId, signature) {
@@ -300,10 +290,10 @@ async function removeRestriction(authorityId, spaceId, permission, appId, signat
                     authority.spaceList[i].restrictions[j].appId == appId) {
                         authority.spaceList[i].restrictions.splice(j, 1);
                         authority.signature = signature;
-                        authority.timestamp = Date.now();
+                        authority.timestamp = new Date().getTime();
 
                         await authority.save();
-                        console.log(authorityId + " removed restrction [" + permission + "|" + appId + "] in " + spaceId);
+                        console.log(authorityId + " removed restriction [" + permission + "|" + appId + "] in " + spaceId);
                         return;
                 }
             }
@@ -366,13 +356,13 @@ app.get("/removeDelegator/:authorityId/:spaceId/:signature", (req, res) => {
 // add restriction
 app.get("/addRestriction/:authorityId/:spaceId/:permission/:appId/:signature", (req, res) => {
     addRestriction(req.params.authorityId, req.params.spaceId, req.params.permission, req.params.appId, req.params.signature);
-    res.send(req.params.authorityId + " added restrction [" + req.params.permission + "|" + req.params.appId + "] in " + req.params.spaceId);
+    res.send(req.params.authorityId + " added restriction [" + req.params.permission + "|" + req.params.appId + "] in " + req.params.spaceId);
 });
 
 // remove restriction
 app.get("/removeRestriction/:authorityId/:spaceId/:permission/:appId/:signature", (req, res) => {
     removeRestriction(req.params.authorityId, req.params.spaceId, req.params.permission, req.params.appId, req.params.signature);
-    res.send(req.params.authorityId + " removed restrction [" + req.params.permission + "|" + req.params.appId + "] in " + req.params.spaceId);
+    res.send(req.params.authorityId + " removed restriction [" + req.params.permission + "|" + req.params.appId + "] in " + req.params.spaceId);
 });
 
 // start web server
