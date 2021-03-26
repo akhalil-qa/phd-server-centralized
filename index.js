@@ -35,7 +35,7 @@ const restrcitionRecordSchema = new mongoose.Schema({
 const spaceListRecordSchema = new mongoose.Schema({
     space: spaceSchema,
     delegator: String,
-    restrcitions: [restrcitionRecordSchema]
+    restrictions: [restrcitionRecordSchema]
 });
 
 // database schema: authority
@@ -57,7 +57,7 @@ const certificateAuthoritySchema = new mongoose.Schema({
 const Authority = mongoose.model("Authority", authoritySchema);
 const CertificateAuthorityRecord = mongoose.model("CertificateAuthorityRecord", certificateAuthoritySchema);
 
-//deleteAuthorities();
+deleteAuthorities();
 //populateDatabase();
 
 // server keys
@@ -204,7 +204,7 @@ async function addSpace(authorityId, id, signature) {
             boundary: []
         },
         delegator: null,
-        restrcitions: []
+        restrictions: []
     });
     authority.signature = signature;
     authority.timestamp = new Date().getTime();
@@ -266,7 +266,7 @@ async function addRestriction(authorityId, spaceId, permission, appId, signature
 
     for (var i = 0; i < authority.spaceList.length; i++) {
         if (authority.spaceList[i].space.id == spaceId) {
-            authority.spaceList[i].restrcitions.push({
+            authority.spaceList[i].restrictions.push({
                 permission: permission,
                 appId: appId
             });
@@ -284,7 +284,7 @@ async function addRestriction(authorityId, spaceId, permission, appId, signature
             boundary: boundary
         },
         delegator: null,
-        restrcitions: []
+        restrictions: []
     });
     const result = await authority.save();
     console.log(authorityId + " added " + id);
@@ -295,10 +295,10 @@ async function removeRestriction(authorityId, spaceId, permission, appId, signat
 
     for (var i = 0; i < authority.spaceList.length; i++) {
         if (authority.spaceList[i].space.id == spaceId) {
-            for (var j = 0; j < authority.spaceList[i].restrcitions.length; j++) {
-                if (authority.spaceList[i].restrcitions[j].permission == permission &&
-                    authority.spaceList[i].restrcitions[j].appId == appId) {
-                        authority.spaceList[i].restrcitions.splice(j, 1);
+            for (var j = 0; j < authority.spaceList[i].restrictions.length; j++) {
+                if (authority.spaceList[i].restrictions[j].permission == permission &&
+                    authority.spaceList[i].restrictions[j].appId == appId) {
+                        authority.spaceList[i].restrictions.splice(j, 1);
                         authority.signature = signature;
                         authority.timestamp = Date.now();
 
