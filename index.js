@@ -14,9 +14,9 @@ mongoose.connect(Constants.DATABASE.URL_CLOUD, {useNewUrlParser: true})
 
 // database schema: coordiante
 const coordinateSchema = new mongoose.Schema({
-    x: String,
-    y: String,
-    z: String
+    latitude: String,
+    longitude: String,
+    altitude: String
 });
 
 // database schema: space
@@ -34,7 +34,7 @@ const restrcitionRecordSchema = new mongoose.Schema({
 // database schema: space list record
 const spaceListRecordSchema = new mongoose.Schema({
     space: spaceSchema,
-    delegation: String,
+    delegator: String,
     restrcitions: [restrcitionRecordSchema]
 });
 
