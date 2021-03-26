@@ -119,7 +119,7 @@ function populateDatabase() {
     addCoordinate(sa2, s5, 8, 12, 0, "");
     addCoordinate(sa2, s5, 8, 8, 0, "");
     addCoordinate(sa2, s5, 3, 12, 0, "");
-    addDelegation(sa2, s5, s5, "");
+    addDelegator(sa2, s5, s5, "");
 
     // Space Authority 3
     addAuthority(sa3);
@@ -229,12 +229,12 @@ async function addCoordinate(authorityId, spaceId, x, y, z, signature) {
     }
 }
 
-async function addDelegation(authorityId, spaceId, delegatorId, signature) {
+async function addDelegator(authorityId, spaceId, delegatorId, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
     for (var i = 0; i < authority.spaceList.length; i++) {
         if (authority.spaceList[i].space.id == spaceId) {
-            authority.spaceList[i].delegation = delegatorId;
+            authority.spaceList[i].delegator = delegatorId;
             authority.signature = signature;
             authority.timestamp = Date.now();
 
@@ -245,12 +245,12 @@ async function addDelegation(authorityId, spaceId, delegatorId, signature) {
     }
 }
 
-async function removeDelegation(authorityId, spaceId, signature) {
+async function removeDelegator(authorityId, spaceId, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
     for (var i = 0; i < authority.spaceList.length; i++) {
         if (authority.spaceList[i].space.id == spaceId) {
-            authority.spaceList[i].delegation = null;
+            authority.spaceList[i].delegator = null;
             authority.signature = signature;
             authority.timestamp = Date.now();
 
@@ -283,7 +283,7 @@ async function addRestriction(authorityId, spaceId, permission, appId, signature
             id: id,
             boundary: boundary
         },
-        delegation: null,
+        delegator: null,
         restrcitions: []
     });
     const result = await authority.save();
@@ -351,15 +351,15 @@ app.get("/addCoordinate/:authorityId/:spaceId/:x/:y/:z/:signature", (req, res) =
     res.send("Coordinate [" + req.params.x + "," +  req.params.y + "," + req.params.z + "] added to space " + req.params.spaceId);
 });
 
-// add delegation
-app.get("/addDelegation/:authorityId/:spaceId/:delegatorId/:signature", (req, res) => {
-    addDelegation(req.params.authorityId, req.params.spaceId, req.params.delegatorId, req.params.signature);
+// add delegator
+app.get("/addDelegator/:authorityId/:spaceId/:delegatorId/:signature", (req, res) => {
+    addDelegator(req.params.authorityId, req.params.spaceId, req.params.delegatorId, req.params.signature);
     res.send(req.params.authorityId + " delegated " + req.params.spaceId + " to " + req.params.delegatorId);
 });
 
-// remove delegation
-app.get("/removeDelegation/:authorityId/:spaceId/:signature", (req, res) => {
-    removeDelegation(req.params.authorityId, req.params.spaceId, req.params.signature);
+// remove delegator
+app.get("/removeDelegator/:authorityId/:spaceId/:signature", (req, res) => {
+    removeDelegator(req.params.authorityId, req.params.spaceId, req.params.signature);
     res.send(req.params.authorityId + " removed delegation of " + req.params.spaceId);
 });
 
