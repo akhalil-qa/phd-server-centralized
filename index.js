@@ -31,11 +31,17 @@ const restrcitionRecordSchema = new mongoose.Schema({
     appId: String
 });
 
+// database schema: delegation record
+const delegationRecordSchema = new mongoose.Schema({
+    space: spaceSchema,
+    delegator: String
+});
+
 // database schema: space list record
 const spaceListRecordSchema = new mongoose.Schema({
     space: spaceSchema,
-    delegator: String,
-    restrictions: [restrcitionRecordSchema]
+    restrictions: [restrcitionRecordSchema],
+    delegations: [delegationRecordSchema]
 });
 
 // database schema: authority
@@ -109,17 +115,18 @@ async function populateDatabase() {
     await addCoordinate(sa2, s2, 4, 16, 0, "");
     await addCoordinate(sa2, s2, 1, 16, 0, "");
     await addCoordinate(sa2, s2, 1, 9, 0, "");
+
     await addSpace(sa2, s7, "");
     await addCoordinate(sa2, s7, 8, 17, 0, "");
     await addCoordinate(sa2, s7, 12, 17, 0, "");
     await addCoordinate(sa2, s7, 12, 13, 0, "");
     await addCoordinate(sa2, s7, 8, 17, 0, "");
-    await addSpace(sa2, s5, "");
-    await addCoordinate(sa2, s5, 3, 12, 0, "");
-    await addCoordinate(sa2, s5, 8, 12, 0, "");
-    await addCoordinate(sa2, s5, 8, 8, 0, "");
-    await addCoordinate(sa2, s5, 3, 12, 0, "");
-    await addDelegator(sa2, s5, sa5, "");
+
+    await addDelegation(sa2, s2, s5, sa5, "");
+    await addDelegationCoordinate(sa2, s2, s5, 3, 12, 0, "");
+    await addDelegationCoordinate(sa2, s2, s5, 8, 12, 0, "");
+    await addDelegationCoordinate(sa2, s2, s5, 8, 8, 0, "");
+    await addDelegationCoordinate(sa2, s2, s5, 3, 12, 0, "");
 
     // Space Authority 3
     await addAuthority(sa3);
@@ -151,6 +158,13 @@ async function populateDatabase() {
     await addCoordinate(sa5, s5, 3, 12, 0, "");
     await addRestriction(sa5, s5, "ACCESS_FINE_LOCATION", "com.twitter.android", "");
     await addRestriction(sa5, s5, "ACCESS_COARSE_LOCATION", "com.twitter.android", "");
+
+    await addDelegation(sa5, s5, s6, sa6, "");
+    await addDelegationCoordinate(sa5, s5, s6, 6, 10, 0, "");
+    await addDelegationCoordinate(sa5, s5, s6, 7, 10, 0, "");
+    await addDelegationCoordinate(sa5, s5, s6, 7, 11, 0, "");
+    await addDelegationCoordinate(sa5, s5, s6, 6, 11, 0, "");
+    await addDelegationCoordinate(sa5, s5, s6, 6, 10, 0, "");
 
     // Space Authority 6
     await addAuthority(sa6);
@@ -203,8 +217,8 @@ async function addSpace(authorityId, id, signature) {
             id: id,
             boundary: []
         },
-        delegator: null,
-        restrictions: []
+        restrictions: [],
+        delegations: []
     });
     authority.signature = signature;
     authority.timestamp = new Date().getTime();
@@ -218,7 +232,11 @@ async function addCoordinate(authorityId, spaceId, latitude, longitude, altitude
 
     for (var i = 0; i < authority.spaceList.length; i++) {
         if (authority.spaceList[i].space.id == spaceId) {
-            authority.spaceList[i].space.boundary.push({latitude: latitude, longitude: longitude, altitude: altitude});
+            authority.spaceList[i].space.boundary.push({
+                latitude: latitude,
+                longitude: longitude,
+                altitude: altitude
+            });
             authority.signature = signature;
             authority.timestamp = new Date().getTime();
 
@@ -229,34 +247,70 @@ async function addCoordinate(authorityId, spaceId, latitude, longitude, altitude
     }
 }
 
-async function addDelegator(authorityId, spaceId, delegatorId, signature) {
+async function addDelegation(authorityId, parentSapceId, delegatedSpaceId, delegatorId, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
     for (var i = 0; i < authority.spaceList.length; i++) {
-        if (authority.spaceList[i].space.id == spaceId) {
-            authority.spaceList[i].delegator = delegatorId;
+        if (authority.spaceList[i].space.id == parentSapceId) {
+            authority.spaceList[i].delegations.push({
+                space: {
+                    id: delegatedSpaceId,
+                    boundary: []
+                },
+                delegator: delegatorId
+            });
             authority.signature = signature;
             authority.timestamp = new Date().getTime();
 
             await authority.save();
-            console.log(authorityId + " delegated " + spaceId + " to " + delegatorId);
+            console.log(authorityId + " delegated " + delegatedSpaceId + " to " + delegatorId);
             return;
         }
     }
 }
 
-async function removeDelegator(authorityId, spaceId, signature) {
+async function removeDelegation(authorityId, parentSpaceId, delegatedSpaceId, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
     for (var i = 0; i < authority.spaceList.length; i++) {
-        if (authority.spaceList[i].space.id == spaceId) {
-            authority.spaceList[i].delegator = null;
-            authority.signature = signature;
-            authority.timestamp = new Date().getTime();
+        if (authority.spaceList[i].space.id == parentSpaceId) {
+            for (var j = 0; j < authority.spaceList[i].delegations.length; j++) {
+                if (authority.spaceList[i].delegations[j].space.id == delegatedSpaceId) {
+                    authority.spaceList[i].delegations.splice(j, 1);
 
-            await authority.save();
-            console.log(authorityId + " removed delegation of " + spaceId);
-            return;
+                    authority.signature = signature;
+                    authority.timestamp = new Date().getTime();
+
+                    await authority.save();
+                    console.log(authorityId + " removed delegation of " + delegatedSpaceId);
+                    return;
+
+                }
+            }
+        }
+    }
+}
+
+async function addDelegationCoordinate(authorityId, parentSpaceId, delegatedSpaceId, latitude, longitude, altitude, signature) {
+    const authority = await Authority.findOne({id: authorityId});
+
+    for (var i = 0; i < authority.spaceList.length; i++) {
+        if (authority.spaceList[i].space.id == parentSpaceId) {
+            for (var j = 0; j < authority.spaceList[i].delegations.length; j++) {
+                if (authority.spaceList[i].delegations[j].space.id == delegatedSpaceId) {
+                    authority.spaceList[i].delegations[j].space.boundary.push({
+                        latitude: latitude,
+                        longitude: longitude,
+                        altitude: altitude
+                    });
+                    authority.signature = signature;
+                    authority.timestamp = new Date().getTime();
+
+                    await authority.save();
+                    console.log("Delegation Coordinate [" + latitude + "," + longitude + "," + altitude + "] added to " + delegatedSpaceId);
+                    return;
+                }
+            }
         }
     }
 }
@@ -323,49 +377,63 @@ app.get("/getDatabaseUpdates/:timestamp", (req, res) => {
     });
 });
 
+// start web server
+const port = process.env.PORT || Constants.WEB_SERVER.PORT;
+app.listen(port, () => {console.log(`Listening in port ${port}`)});
+
+/*
 // add authority
 app.get("/addAuthority/:id/", (req, res) => {
     addAuthority(req.params.id);
     res.send("Authority " + req.params.id + " added");
 });
+*/
 
+/*
 // add space
 app.get("/addSpace/:authorityId/:id/:signature", (req, res) => {
     addSpace(req.params.authorityId, req.params.id, req.params.signature);
     res.send("Space " + req.params.id + " added to authority " + req.params.authorityId);
 });
+*/
 
+/*
 // add coordiante
 app.get("/addCoordinate/:authorityId/:spaceId/:x/:y/:z/:signature", (req, res) => {
     addCoordinate(req.params.authorityId, req.params.spaceId, req.params.x, req.params.y, req.params.z, req.params.signature);
     res.send("Coordinate [" + req.params.x + "," +  req.params.y + "," + req.params.z + "] added to space " + req.params.spaceId);
 });
+*/
 
+/*
 // add delegator
 app.get("/addDelegator/:authorityId/:spaceId/:delegatorId/:signature", (req, res) => {
     addDelegator(req.params.authorityId, req.params.spaceId, req.params.delegatorId, req.params.signature);
     res.send(req.params.authorityId + " delegated " + req.params.spaceId + " to " + req.params.delegatorId);
 });
+*/
 
+/*
 // remove delegator
 app.get("/removeDelegator/:authorityId/:spaceId/:signature", (req, res) => {
     removeDelegator(req.params.authorityId, req.params.spaceId, req.params.signature);
     res.send(req.params.authorityId + " removed delegation of " + req.params.spaceId);
 });
+*/
 
+/*
 // add restriction
 app.get("/addRestriction/:authorityId/:spaceId/:permission/:appId/:signature", (req, res) => {
     addRestriction(req.params.authorityId, req.params.spaceId, req.params.permission, req.params.appId, req.params.signature);
     res.send(req.params.authorityId + " added restriction [" + req.params.permission + "|" + req.params.appId + "] in " + req.params.spaceId);
 });
+*/
 
+/*
 // remove restriction
 app.get("/removeRestriction/:authorityId/:spaceId/:permission/:appId/:signature", (req, res) => {
     removeRestriction(req.params.authorityId, req.params.spaceId, req.params.permission, req.params.appId, req.params.signature);
     res.send(req.params.authorityId + " removed restriction [" + req.params.permission + "|" + req.params.appId + "] in " + req.params.spaceId);
 });
-
-// start web server
-const port = process.env.PORT || Constants.WEB_SERVER.PORT;
-app.listen(port, () => {console.log(`Listening in port ${port}`)});
+*/
 
