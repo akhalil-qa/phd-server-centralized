@@ -301,7 +301,7 @@ async function removeRestriction(authorityId, spaceId, permission, appId, signat
     }
 }
 
-async function getDatabase(timestamp) {
+async function getDatabaseUpdates(timestamp) {
     const authorities = await Authority.find({timestamp: {$gt: timestamp}});
     const signature = Crypto.Rsa.sign(authorities.toString(), keyPair.privateKey);
     return {authorities: authorities, signature: signature};
@@ -317,8 +317,8 @@ app.get("/generateKeyPair", (req, res) => {
 });
 
 // get database
-app.get("/getDatabase/:timestamp", (req, res) => {
-    getDatabase(req.params.timestamp).then((authorities) => {
+app.get("/getDatabaseUpdates/:timestamp", (req, res) => {
+    getDatabaseUpdates(req.params.timestamp).then((authorities) => {
         res.send(authorities);
     });
 });
