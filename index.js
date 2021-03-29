@@ -1,7 +1,3 @@
-// TODO: compress the database before sending
-// TODO: develop the ui for the server side
-// TODO: sign the updates send by space authority to the server
-
 const Constants = require("./Constants");
 const Crypto = require("./Crypto");
 const express = require("express");
