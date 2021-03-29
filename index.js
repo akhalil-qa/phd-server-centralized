@@ -174,6 +174,7 @@ async function populateDatabase() {
     await addCoordinate(sa6, s6, 7, 11, 0, "");
     await addCoordinate(sa6, s6, 6, 11, 0, "");
     await addCoordinate(sa6, s6, 6, 10, 0, "");
+    await addRestriction(sa6, s6, ".", "com.snapchat.android", "");
 }
 
 function generateKeyPair() {
