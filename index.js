@@ -2,11 +2,9 @@ const Constants = require("./Constants");
 const Crypto = require("./Crypto");
 const express = require("express");
 const mongoose = require("mongoose");
+const { response } = require("express");
 
-// connect to the database
-mongoose.connect(Constants.DATABASE.URL_CLOUD, {useNewUrlParser: true})
-    .then(() => console.log("Connected to database."))
-    .catch(err => console.error("Coluld not connect to database.", err));
+/******************** DATABASE ********************/
 
 // database schema: coordiante
 const coordinateSchema = new mongoose.Schema({
@@ -51,30 +49,30 @@ const authoritySchema = new mongoose.Schema({
 // database schema: certificate authority
 const certificateAuthoritySchema = new mongoose.Schema({
     authorityId: String,
-    publicKey: String,
-    privateKey: String
+    publicKey: String
 });
 
 // database models
 const Authority = mongoose.model("Authority", authoritySchema);
 const CertificateAuthorityRecord = mongoose.model("CertificateAuthorityRecord", certificateAuthoritySchema);
 
-//deleteAuthorities()
-//populateDatabase();
+/**************************************************/
 
-// server keys
-var keyPair = {};
-getCertificateAuthorityRecord(Constants.WEB_SERVER.NAME).then((record) => {
-    if (!record) {
-        keyPair = generateKeyPair();
-        addCertificateAuthorityRecord(Constants.WEB_SERVER.NAME, keyPair.publicKey, keyPair.privateKey);
-    } else {
-        keyPair.publicKey = record.publicKey;
-        keyPair.privateKey = record.privateKey;
-    }
-});
+/******************* FUNCTIONS ********************/
 
-async function populateDatabase() {
+// clear Authorities collection
+async function clearAuthoritiesCollection() {
+    await Authority.deleteMany({});
+}
+
+// clear CertificateAuthorityRecords collection
+async function clearCertificateAuthorityRecordsCollection() {
+    await CertificateAuthorityRecord.deleteMany({});
+}
+
+// populate authorities collection with dummy intial documents
+// TODO: to be reviewed or removed at later stage
+async function populateAuthoritiesCollection() {
     const sa1 = "Space Authority 1";
     const sa2 = "Space Authority 2";
     const sa3 = "Space Authority 3";
@@ -91,7 +89,7 @@ async function populateDatabase() {
     const s7 = "Space 7";
 
     // Space Authority 1
-    await addAuthority(sa1);
+    await addAuthority(sa1, "");
     await addSpace(sa1, s1, "");
     await addCoordinate(sa1, s1, 1, 1, 0, "");
     await addCoordinate(sa1, s1, 6, 1, 0, "");
@@ -102,7 +100,7 @@ async function populateDatabase() {
     await addRestriction(sa1, s1, ".", "com.twitter.android", "");
 
     // Space Authority 2
-    await addAuthority(sa2);
+    await addAuthority(sa2, "");
     await addSpace(sa2, s2, "");
     await addCoordinate(sa2, s2, 1, 9, 0, "");
     await addCoordinate(sa2, s2, 9, 6, 0, "");
@@ -125,7 +123,7 @@ async function populateDatabase() {
     await addDelegationCoordinate(sa2, s2, s5, 3, 12, 0, "");
 
     // Space Authority 3
-    await addAuthority(sa3);
+    await addAuthority(sa3, "");
     await addSpace(sa3, s3, "");
     await addCoordinate(sa3, s3, 8, 1, 0, "");
     await addCoordinate(sa3, s3, 11, 1, 0, "");
@@ -135,7 +133,7 @@ async function populateDatabase() {
     await addCoordinate(sa3, s3, 8, 1, 0, "");
 
     // Space Authority 4
-    await addAuthority(sa4);
+    await addAuthority(sa4, "");
     await addSpace(sa4, s4, "");
     await addCoordinate(sa4, s4, 2, 2, 0, "");
     await addCoordinate(sa4, s4, 4, 2, 0, "");
@@ -146,7 +144,7 @@ async function populateDatabase() {
     await addRestriction(sa4, s4, "RECORD_AUDIO", "com.snapchat.android", "");
 
     // Space Authority 5
-    await addAuthority(sa5);
+    await addAuthority(sa5, "");
     await addSpace(sa5, s5, "");
     await addCoordinate(sa5, s5, 3, 12, 0, "");
     await addCoordinate(sa5, s5, 8, 12, 0, "");
@@ -163,7 +161,7 @@ async function populateDatabase() {
     await addDelegationCoordinate(sa5, s5, s6, 6, 10, 0, "");
 
     // Space Authority 6
-    await addAuthority(sa6);
+    await addAuthority(sa6, "");
     await addSpace(sa6, s6, "");
     await addCoordinate(sa6, s6, 6, 10, 0, "");
     await addCoordinate(sa6, s6, 7, 10, 0, "");
@@ -173,40 +171,65 @@ async function populateDatabase() {
     await addRestriction(sa6, s6, ".", "com.snapchat.android", "");
 }
 
+// TODO: to be reviwed at later stage to check if it is still required
+// generate keypair
 function generateKeyPair() {
     return Crypto.Rsa.generateKeyPair();
 }
 
-async function addCertificateAuthorityRecord(authorityId, publicKey, privateKey) {
+// add CertificateAuthorityRecord document
+async function addCertificateAuthorityRecord(authorityId, publicKey) {
     const record = new CertificateAuthorityRecord({
         authorityId: authorityId,
-        publicKey: publicKey,
-        privateKey: privateKey
+        publicKey: publicKey
     });
     await record.save();
     console.log("Certificate authority record added for " + authorityId);
 }
 
+// get authorities documents updates (documents updated after the supplied timestamp)
+async function getAuthoritiesDocumentsUpdates(timestamp) {
+    const authorities = await Authority.find({timestamp: {$gt: timestamp}});
+    const signature = Crypto.Rsa.sign(authorities.toString(), serveyKeyPair.privateKey);
+    return {authorities: authorities, signature: signature};
+}
+
+// get certificateAuthorityRecord document associated with the supplied authority id
 async function getCertificateAuthorityRecord(authorityId) {
     return await CertificateAuthorityRecord.findOne({authorityId: authorityId});
 }
 
-async function addAuthority(id) {
+// get Authority document associated with the supplied authority id
+async function getAuthorityRecord(authorityId) {
+    return await Authority.findOne({id: authorityId});
+}
+
+// add authority document
+async function addAuthority(id, signature) {
     const authority = new Authority({
         id: id,
         spaceList: [],
-        signature: null,
+        signature: signature,
         timestamp: new Date().getTime()
     });
     await authority.save();
-    console.log("Authority " + id + " added");
+    console.log("Authority " + id + " added.");
 }
 
-async function deleteAuthorities() {
-    await Authority.deleteMany({});
-    console.log("Deleted all authorities");
+// update authority document
+// data supplied must be stringified json object
+async function updateAuthority(id, data) {
+    data = JSON.parse(data);
+    const authority = await Authority.findOne({id: id});
+    authority.spaceList = data.spaceList;
+    authority.signature = data.signature;
+    authority.timestamp = new Date().getTime();
+    const result = await authority.save();
+    console.log("Authority " + id  + " updated.");
+    return result;
 }
 
+// TODO: maybe not needed
 async function addSpace(authorityId, id, signature) {
     const authority = await Authority.findOne({id: authorityId});
     authority.spaceList.push({
@@ -224,6 +247,7 @@ async function addSpace(authorityId, id, signature) {
     console.log(authorityId + " added " + id);
 }
 
+// TODO: maybe not needed
 async function addCoordinate(authorityId, spaceId, latitude, longitude, altitude, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
@@ -244,6 +268,7 @@ async function addCoordinate(authorityId, spaceId, latitude, longitude, altitude
     }
 }
 
+// TODO: maybe not needed
 async function addDelegation(authorityId, parentSapceId, delegatedSpaceId, delegatorId, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
@@ -266,6 +291,7 @@ async function addDelegation(authorityId, parentSapceId, delegatedSpaceId, deleg
     }
 }
 
+// TODO: maybe not needed
 async function removeDelegation(authorityId, parentSpaceId, delegatedSpaceId, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
@@ -288,6 +314,7 @@ async function removeDelegation(authorityId, parentSpaceId, delegatedSpaceId, si
     }
 }
 
+// TODO: maybe not needed
 async function addDelegationCoordinate(authorityId, parentSpaceId, delegatedSpaceId, latitude, longitude, altitude, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
@@ -312,6 +339,7 @@ async function addDelegationCoordinate(authorityId, parentSpaceId, delegatedSpac
     }
 }
 
+// TODO: maybe not needed
 async function addRestriction(authorityId, spaceId, permission, appId, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
@@ -331,6 +359,7 @@ async function addRestriction(authorityId, spaceId, permission, appId, signature
     }
 }
 
+// TODO: maybe not needed
 async function removeRestriction(authorityId, spaceId, permission, appId, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
@@ -352,85 +381,169 @@ async function removeRestriction(authorityId, spaceId, permission, appId, signat
     }
 }
 
-async function getDatabaseUpdates(timestamp) {
-    const authorities = await Authority.find({timestamp: {$gt: timestamp}});
-    const signature = Crypto.Rsa.sign(authorities.toString(), keyPair.privateKey);
-    return {authorities: authorities, signature: signature};
-}
+/**************************************************/
+
+/***********I********* SERVER *********************/
+
+// server key pair
+var serveyKeyPair = {
+    publicKey: "-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAwP4qDVAoOI+g69exIUoV\nZdK1vfY33CmiWFGWnyFIO9TPe7wqBytsyEi0H3O0H1oA4kiwmlgNQW8bBcyvwqhc\nfGkNYkscOfV9L2pe1T9kvyllzSIf7+tib6IQ7jPPYjJfWvZmS7PrVFnSMvxQMX8S\nQTCkWwRrrV1pttIZMF4RO9DwmXdvE1V4sH2/aX1vv05SSTWcKjA2QLkC5/11Fm0q\nU9aUT4mgepIMSOGYBE3QY7kFuzmExEwNyg1AaMeXbd4zhh4ia4mcGB5AHrjhMt4g\n2JkTsGaegmb3qPR16CTRKEzuz0OS8DE4ZDsb8QTadmLtMrioG6YaURPDouYLBxBl\nFBF+8KHr7fY0ABBWZA6osGieKVkgV3n6E+x3YR83k4mTm3qqUOGnvcYrJVcHxmS1\nyhEsQ5XDOSZYqBCF/GJTwz4mxTG/XBriWJR7f4myyOKOIJJdXDMg0R7x1mUD6AlN\neydMaIKwJYu7nnWdI5x+MiUz0uleDksot16WQWd6lI3O776EfyZWDLLCbxZMn4FV\nkVWh66HJDlXgJsT8rKzE3K+huZBhTYxlgUuWDkz5Vy6QlXxl2rWFJn0yShK0ZLjn\nee5W5VJqwKU52oLuk8BXm1DmfhGKlkNiv47xQWi6XvFr0K2zW98Vgndm6i03DoTr\nQhBdut/ZZSbF5Rfj0JlA23MCAwEAAQ==\n-----END PUBLIC KEY-----\n",
+    privateKey: "-----BEGIN PRIVATE KEY-----\n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\nfL32MwGp9n9hBfP1wsDu2OwDrZtkdgL99w==\n-----END PRIVATE KEY-----\n"
+};
+
+// connect to the database
+mongoose.connect(Constants.DATABASE.URL_LOCAL, {useNewUrlParser: true})
+    .then(() => console.log("Connected to database."))
+    .catch(err => console.error("Colud not connect to database.", err));
 
 // initialize web server
 const app = express();
 app.use(express.json());
 
-// generate key pair
-app.get("/generateKeyPair", (req, res) => {
+// TODO: to be reviwed if it needs to be removed at later stage
+// generate keypair
+app.get("/debug/generateKeyPair", (req, res) => {
     res.send(generateKeyPair());
 });
 
-// get database
+// clear database contect: Authorities collection and CertificateAuthorityRecords collection
+app.get("/debug/clearDatabase", (req, res) => {
+    clearAuthoritiesCollection();
+    clearCertificateAuthorityRecordsCollection();
+    res.send("Authorities collection cleared.<br>CertificateAuthorityRecords collection cleared.");
+});
+
+// populate database with initial data
+app.get("/debug/populateDatabase", (req, res) => {
+    addCertificateAuthorityRecord(Constants.WEB_SERVER.NAME, serveyKeyPair.publicKey);
+    populateAuthoritiesCollection();
+    res.send("Database populated.");
+});
+
+// get database records updated after the supplied timestamp
 app.get("/getDatabaseUpdates/:timestamp", (req, res) => {
-    getDatabaseUpdates(req.params.timestamp).then((authorities) => {
+    getAuthoritiesDocumentsUpdates(req.params.timestamp).then((authorities) => {
         res.send(authorities);
     });
+});
+
+// register authority's public key with CA
+app.get("/registerKey/:authorityId/:publicKey", (req, res) => {
+    
+    // if authority is already registered, do not register it again
+    getCertificateAuthorityRecord(req.params.authorityId).then((record) => {
+        if (record) {
+            res.send({
+                result: "fail",
+                error: "Authority is already registered with CA."
+            });
+        } else {
+            addCertificateAuthorityRecord(req.params.authorityId, req.params.publicKey);
+            res.send({response: "success"});
+        }
+    });
+ 
+});
+
+// register space authority
+app.get("/registerAuthority/:authorityId/:signature", (req, res) => {
+    // if space authority is already registered, do not register it again
+    getAuthorityRecord(req.params.authorityId).then((record) => {
+        if (record) {
+            res.send({
+                result: "fail",
+                error: "Space authority is already registered in the server."
+            });
+        } else {
+            // if signature is not verified, do not register it
+            getCertificateAuthorityRecord(req.params.authorityId).then((record) => {
+                if (!Crypto.Rsa.verify(req.params.authorityId, record.publicKey, req.params.signature)) {
+                    res.send({
+                        result: "fail",
+                        error: "Signature cannot be verified by the server."
+                    });
+                } else {
+                    // add space authority to the database
+                    addAuthority(req.params.authorityId, req.params.signature);
+                    res.send({result: "success"});
+                }
+            });
+        }
+    });
+});
+
+// space authority login
+app.get("/loginAuthority/:authorityId/:random/:signature", (req, res) => {
+    // if no authority record found, do not log in
+    getAuthorityRecord(req.params.authorityId).then((record) => {
+        if (!record) {
+            res.send({
+                result: "fail",
+                error: "Authority is not found in the database."
+            });
+            return;
+        } else {
+            // if signautre is not verified, do not log in
+            getCertificateAuthorityRecord(req.params.authorityId).then((record) => {
+                // if authority is not registered in CA, do not log in
+                if (!record) {
+                    res.send({
+                        result: "fail",
+                        error: "Cannot obtain authority's public key. Authority is not registered with CA."
+                    });
+                } else {
+                    if (!Crypto.Rsa.verify(req.params.random, record.publicKey, req.params.signature)) {
+                        res.send({
+                            result: "fail",
+                            error: "Signature cannot be verified by the server."
+                        });
+                    } else {
+                        getAuthorityRecord(req.params.authorityId).then((record) => {
+                            res.send(record);
+                        });
+                    }
+                }
+            });
+        }
+    });
+});
+
+// update space authority details
+app.get("/updateAuthority/:authorityId/:data/:signature", (req, res) => {
+        // if no authority record found, do not update
+        getAuthorityRecord(req.params.authorityId).then((record) => {
+            if (!record) {
+                res.send({
+                    result: "fail",
+                    error: "Authority is not found in the database."
+                });
+                return;
+            } else {
+                // if signautre is not verified, do not update
+                getCertificateAuthorityRecord(req.params.authorityId).then((record) => {
+                    // if authority is not registered in CA, do not update
+                    if (!record) {
+                        res.send({
+                            result: "fail",
+                            error: "Cannot obtain authority's public key. Authority is not registered with CA."
+                        });
+                    } else {
+                        if (!Crypto.Rsa.verify(req.params.data, record.publicKey, req.params.signature)) {
+                            res.send({
+                                result: "fail",
+                                error: "Signature cannot be verified by the server."
+                            });
+                        } else {
+                            updateAuthority(req.params.authorityId, req.params.data).then((result) => {
+                                res.send(result);
+                            });
+                        }
+                    }
+                });
+            }
+        });
 });
 
 // start web server
 const port = process.env.PORT || Constants.WEB_SERVER.PORT;
 app.listen(port, () => {console.log(`Listening in port ${port}`)});
-
-/*
-// add authority
-app.get("/addAuthority/:id/", (req, res) => {
-    addAuthority(req.params.id);
-    res.send("Authority " + req.params.id + " added");
-});
-*/
-
-/*
-// add space
-app.get("/addSpace/:authorityId/:id/:signature", (req, res) => {
-    addSpace(req.params.authorityId, req.params.id, req.params.signature);
-    res.send("Space " + req.params.id + " added to authority " + req.params.authorityId);
-});
-*/
-
-/*
-// add coordiante
-app.get("/addCoordinate/:authorityId/:spaceId/:x/:y/:z/:signature", (req, res) => {
-    addCoordinate(req.params.authorityId, req.params.spaceId, req.params.x, req.params.y, req.params.z, req.params.signature);
-    res.send("Coordinate [" + req.params.x + "," +  req.params.y + "," + req.params.z + "] added to space " + req.params.spaceId);
-});
-*/
-
-/*
-// add delegator
-app.get("/addDelegator/:authorityId/:spaceId/:delegatorId/:signature", (req, res) => {
-    addDelegator(req.params.authorityId, req.params.spaceId, req.params.delegatorId, req.params.signature);
-    res.send(req.params.authorityId + " delegated " + req.params.spaceId + " to " + req.params.delegatorId);
-});
-*/
-
-/*
-// remove delegator
-app.get("/removeDelegator/:authorityId/:spaceId/:signature", (req, res) => {
-    removeDelegator(req.params.authorityId, req.params.spaceId, req.params.signature);
-    res.send(req.params.authorityId + " removed delegation of " + req.params.spaceId);
-});
-*/
-
-/*
-// add restriction
-app.get("/addRestriction/:authorityId/:spaceId/:permission/:appId/:signature", (req, res) => {
-    addRestriction(req.params.authorityId, req.params.spaceId, req.params.permission, req.params.appId, req.params.signature);
-    res.send(req.params.authorityId + " added restriction [" + req.params.permission + "|" + req.params.appId + "] in " + req.params.spaceId);
-});
-*/
-
-/*
-// remove restriction
-app.get("/removeRestriction/:authorityId/:spaceId/:permission/:appId/:signature", (req, res) => {
-    removeRestriction(req.params.authorityId, req.params.spaceId, req.params.permission, req.params.appId, req.params.signature);
-    res.send(req.params.authorityId + " removed restriction [" + req.params.permission + "|" + req.params.appId + "] in " + req.params.spaceId);
-});
-*/
-
