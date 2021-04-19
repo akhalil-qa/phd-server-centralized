@@ -392,7 +392,7 @@ var serveyKeyPair = {
 };
 
 // connect to the database
-mongoose.connect(Constants.DATABASE.URL_LOCAL, {useNewUrlParser: true})
+mongoose.connect(Constants.DATABASE.URL_CLOUD, {useNewUrlParser: true})
     .then(() => console.log("Connected to database."))
     .catch(err => console.error("Colud not connect to database.", err));
 
