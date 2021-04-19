@@ -97,7 +97,7 @@ async function populateAuthoritiesCollection() {
     await addCoordinate(sa1, s1, 1, 5, 0, "");
     await addCoordinate(sa1, s1, 1, 1, 0, "");
     await addRestriction(sa1, s1, "RECORD_AUDIO", "com.skype.raider", "");
-    await addRestriction(sa1, s1, ".", "com.twitter.android", "");
+    await addRestriction(sa1, s1, "*", "com.twitter.android", "");
 
     // Space Authority 2
     await addAuthority(sa2, "");
@@ -168,7 +168,7 @@ async function populateAuthoritiesCollection() {
     await addCoordinate(sa6, s6, 7, 11, 0, "");
     await addCoordinate(sa6, s6, 6, 11, 0, "");
     await addCoordinate(sa6, s6, 6, 10, 0, "");
-    await addRestriction(sa6, s6, ".", "com.snapchat.android", "");
+    await addRestriction(sa6, s6, "*", "com.snapchat.android", "");
 }
 
 // TODO: to be reviwed at later stage to check if it is still required
