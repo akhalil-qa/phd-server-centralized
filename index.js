@@ -493,7 +493,7 @@ app.get("/registerAuthority/:authorityId/:signature", (req, res) => {
 });
 
 // space authority login
-app.get("/loginAuthority/:authorityId/:random/:signature", (req, res) => {
+app.get("/loginAuthority/:authorityId/:timestamp/:signature", (req, res) => {
     // if no authority record found, do not log in
     getAuthorityRecord(req.params.authorityId).then((record) => {
         if (!record) {
@@ -512,7 +512,7 @@ app.get("/loginAuthority/:authorityId/:random/:signature", (req, res) => {
                         message: "Cannot obtain authority's public key. Authority is not registered with CA."
                     });
                 } else {
-                    if (!Crypto.Rsa.verify(req.params.random, record.publicKey, req.params.signature)) {
+                    if (!Crypto.Rsa.verify(req.params.timestamp, record.publicKey, req.params.signature)) {
                         res.send({
                             result: "fail",
                             message: "Signature cannot be verified by the server."
