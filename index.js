@@ -171,7 +171,7 @@ async function populateAuthoritiesCollection() {
     await addRestriction(sa6, s6, "*", "com.snapchat.android", "");
 }
 
-// TODO: to be reviwed at later stage to check if it is still required
+// TODO: to be reviewed at later stage to check if it is still required
 // generate keypair
 function generateKeyPair() {
     return Crypto.Rsa.generateKeyPair();
@@ -400,13 +400,13 @@ mongoose.connect(Constants.DATABASE.URL_CLOUD, {useNewUrlParser: true})
 const app = express();
 app.use(express.json());
 
-// TODO: to be reviwed if it needs to be removed at later stage
+// TODO: to be reviewed if it needs to be removed at later stage
 // generate keypair
 app.get("/debug/generateKeyPair", (req, res) => {
     res.send(generateKeyPair());
 });
 
-// clear database contect: Authorities collection and CertificateAuthorityRecords collection
+// clear database content: Authorities collection and CertificateAuthorityRecords collection
 app.get("/debug/clearDatabase", (req, res) => {
     clearAuthoritiesCollection();
     clearCertificateAuthorityRecordsCollection();
@@ -435,7 +435,7 @@ app.get("/registerKey/:authorityId/:publicKey", (req, res) => {
         if (record) {
             res.send({
                 result: "fail",
-                error: "Authority is already registered with CA."
+                message: "Authority is already registered with CA."
             });
         } else {
             addCertificateAuthorityRecord(req.params.authorityId, req.params.publicKey);
@@ -452,20 +452,28 @@ app.get("/registerAuthority/:authorityId/:signature", (req, res) => {
         if (record) {
             res.send({
                 result: "fail",
-                error: "Space authority is already registered in the server."
+                message: "Space authority is already registered in the server."
             });
         } else {
             // if signature is not verified, do not register it
             getCertificateAuthorityRecord(req.params.authorityId).then((record) => {
-                if (!Crypto.Rsa.verify(req.params.authorityId, record.publicKey, req.params.signature)) {
+                if (!record) {
                     res.send({
                         result: "fail",
-                        error: "Signature cannot be verified by the server."
+                        message: "Cannot obtain its public key from CA."
                     });
-                } else {
-                    // add space authority to the database
-                    addAuthority(req.params.authorityId, req.params.signature);
-                    res.send({result: "success"});
+                }
+                else {
+                    if (!Crypto.Rsa.verify(req.params.authorityId, record.publicKey, req.params.signature)) {
+                        res.send({
+                            result: "fail",
+                            message: "Signature cannot be verified by the server."
+                        });
+                    } else {
+                        // add space authority to the database
+                        addAuthority(req.params.authorityId, req.params.signature);
+                        res.send({result: "success"});
+                    }
                 }
             });
         }
@@ -479,7 +487,7 @@ app.get("/loginAuthority/:authorityId/:random/:signature", (req, res) => {
         if (!record) {
             res.send({
                 result: "fail",
-                error: "Authority is not found in the database."
+                message: "Authority is not found in the database."
             });
             return;
         } else {
@@ -489,13 +497,13 @@ app.get("/loginAuthority/:authorityId/:random/:signature", (req, res) => {
                 if (!record) {
                     res.send({
                         result: "fail",
-                        error: "Cannot obtain authority's public key. Authority is not registered with CA."
+                        message: "Cannot obtain authority's public key. Authority is not registered with CA."
                     });
                 } else {
                     if (!Crypto.Rsa.verify(req.params.random, record.publicKey, req.params.signature)) {
                         res.send({
                             result: "fail",
-                            error: "Signature cannot be verified by the server."
+                            message: "Signature cannot be verified by the server."
                         });
                     } else {
                         getAuthorityRecord(req.params.authorityId).then((record) => {
@@ -515,7 +523,7 @@ app.get("/updateAuthority/:authorityId/:data/:signature", (req, res) => {
             if (!record) {
                 res.send({
                     result: "fail",
-                    error: "Authority is not found in the database."
+                    message: "Authority is not found in the database."
                 });
                 return;
             } else {
@@ -525,13 +533,13 @@ app.get("/updateAuthority/:authorityId/:data/:signature", (req, res) => {
                     if (!record) {
                         res.send({
                             result: "fail",
-                            error: "Cannot obtain authority's public key. Authority is not registered with CA."
+                            message: "Cannot obtain authority's public key. Authority is not registered with CA."
                         });
                     } else {
                         if (!Crypto.Rsa.verify(req.params.data, record.publicKey, req.params.signature)) {
                             res.send({
                                 result: "fail",
-                                error: "Signature cannot be verified by the server."
+                                message: "Signature cannot be verified by the server."
                             });
                         } else {
                             updateAuthority(req.params.authorityId, req.params.data).then((result) => {
