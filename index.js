@@ -187,6 +187,11 @@ async function addCertificateAuthorityRecord(authorityId, publicKey) {
     console.log("Certificate authority record added for " + authorityId);
 }
 
+// get all CertificateAuthorityRecord documents
+async function getCertificateAuthorityRecords() {
+    return await CertificateAuthorityRecord.find({});
+}
+
 // get authorities documents updates (documents updated after the supplied timestamp)
 async function getAuthoritiesDocumentsUpdates(timestamp) {
     const authorities = await Authority.find({timestamp: {$gt: timestamp}});
@@ -418,6 +423,13 @@ app.get("/debug/populateDatabase", (req, res) => {
     addCertificateAuthorityRecord(Constants.WEB_SERVER.NAME, serveyKeyPair.publicKey);
     populateAuthoritiesCollection();
     res.send("Database populated.");
+});
+
+// get all CertificateAuthorityRecord records
+app.get("/debug/getCertificateAuthorityRecords", (req, res) => {
+    getCertificateAuthorityRecords().then((records) => {
+        res.send(records);
+    });
 });
 
 // get database records updated after the supplied timestamp
