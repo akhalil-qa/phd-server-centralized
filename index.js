@@ -1,6 +1,7 @@
 const Constants = require("./Constants");
 const Crypto = require("./Crypto");
 const express = require("express");
+const cors = require("cors");
 const mongoose = require("mongoose");
 const { response } = require("express");
 
@@ -402,45 +403,44 @@ mongoose.connect(Constants.DATABASE.URL_CLOUD, {useNewUrlParser: true})
     .catch(err => console.error("Colud not connect to database.", err));
 
 // initialize web server
-const app = express();
-app.use(express.json());
+const app = express();app.use(express.json());
 
 // TODO: to be reviewed if it needs to be removed at later stage
 // generate keypair
-app.get("/debug/generateKeyPair", (req, res) => {
+app.get("/debug/generateKeyPair", cors(), (req, res) => {
     res.send(generateKeyPair());
 });
 
 // clear database content: Authorities collection and CertificateAuthorityRecords collection
-app.get("/debug/clearDatabase", (req, res) => {
+app.get("/debug/clearDatabase", cors(), (req, res) => {
     clearAuthoritiesCollection();
     clearCertificateAuthorityRecordsCollection();
     res.send("Authorities collection cleared.<br>CertificateAuthorityRecords collection cleared.");
 });
 
 // populate database with initial data
-app.get("/debug/populateDatabase", (req, res) => {
+app.get("/debug/populateDatabase", cors(), (req, res) => {
     addCertificateAuthorityRecord(Constants.WEB_SERVER.NAME, serveyKeyPair.publicKey);
     populateAuthoritiesCollection();
     res.send("Database populated.");
 });
 
 // get all CertificateAuthorityRecord records
-app.get("/debug/getCertificateAuthorityRecords", (req, res) => {
+app.get("/debug/getCertificateAuthorityRecords", cors(), (req, res) => {
     getCertificateAuthorityRecords().then((records) => {
         res.send(records);
     });
 });
 
 // get database records updated after the supplied timestamp
-app.get("/getDatabaseUpdates/:timestamp", (req, res) => {
+app.get("/getDatabaseUpdates/:timestamp", cors(), (req, res) => {
     getAuthoritiesDocumentsUpdates(req.params.timestamp).then((authorities) => {
         res.send(authorities);
     });
 });
 
 // register authority's public key with CA
-app.get("/registerKey/:authorityId/:publicKey", (req, res) => {
+app.get("/registerKey/:authorityId/:publicKey", cors(), (req, res) => {
     
     // if authority is already registered, do not register it again
     getCertificateAuthorityRecord(req.params.authorityId).then((record) => {
@@ -458,7 +458,7 @@ app.get("/registerKey/:authorityId/:publicKey", (req, res) => {
 });
 
 // register space authority
-app.get("/registerAuthority/:authorityId/:signature", (req, res) => {
+app.get("/registerAuthority/:authorityId/:signature", cors(), (req, res) => {
     // if space authority is already registered, do not register it again
     getAuthorityRecord(req.params.authorityId).then((record) => {
         if (record) {
@@ -493,7 +493,7 @@ app.get("/registerAuthority/:authorityId/:signature", (req, res) => {
 });
 
 // space authority login
-app.get("/loginAuthority/:authorityId/:timestamp/:signature", (req, res) => {
+app.get("/loginAuthority/:authorityId/:timestamp/:signature", cors(), (req, res) => {
     // if no authority record found, do not log in
     getAuthorityRecord(req.params.authorityId).then((record) => {
         if (!record) {
@@ -529,7 +529,7 @@ app.get("/loginAuthority/:authorityId/:timestamp/:signature", (req, res) => {
 });
 
 // update space authority details
-app.get("/updateAuthority/:authorityId/:data/:signature", (req, res) => {
+app.get("/updateAuthority/:authorityId/:data/:signature", cors(), (req, res) => {
         // if no authority record found, do not update
         getAuthorityRecord(req.params.authorityId).then((record) => {
             if (!record) {
