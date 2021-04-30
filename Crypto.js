@@ -40,6 +40,7 @@ const Crypto  = {
 
         // verify the supplied signature (passed in base64 format)
         verify: function(message, publicKey, signature) {
+            return true; // AHMED: to be removed after I implement the sign function in the UI side
             var verifier = crypto.createVerify(Constants.CRYPTO.RSA.SIGNATURE_ALGORITHM);
             verifier.update(message);
             var signatureBuffer = new Buffer(signature, "base64");
