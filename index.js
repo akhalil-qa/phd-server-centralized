@@ -72,7 +72,6 @@ async function clearCertificateAuthorityRecordsCollection() {
 }
 
 // populate authorities collection with dummy intial documents
-// TODO: to be reviewed or removed at later stage
 async function populateAuthoritiesCollection() {
     const sa1 = "Space Authority 1";
     const sa2 = "Space Authority 2";
@@ -172,12 +171,6 @@ async function populateAuthoritiesCollection() {
     await addRestriction(sa6, s6, "*", "com.snapchat.android", "");
 }
 
-// TODO: to be reviewed at later stage to check if it is still required
-// generate keypair
-function generateKeyPair() {
-    return Crypto.Rsa.generateKeyPair();
-}
-
 // add CertificateAuthorityRecord document
 async function addCertificateAuthorityRecord(authorityId, publicKey) {
     const record = new CertificateAuthorityRecord({
@@ -235,7 +228,8 @@ async function updateAuthority(id, data) {
     return result;
 }
 
-// TODO: maybe not needed
+// add space
+// used in populateAuthoritiesCollection() function only
 async function addSpace(authorityId, id, signature) {
     const authority = await Authority.findOne({id: authorityId});
     authority.spaceList.push({
@@ -253,7 +247,8 @@ async function addSpace(authorityId, id, signature) {
     console.log(authorityId + " added " + id);
 }
 
-// TODO: maybe not needed
+// add coordinate
+// used in populateAuthoritiesCollection() function only
 async function addCoordinate(authorityId, spaceId, latitude, longitude, altitude, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
@@ -274,7 +269,8 @@ async function addCoordinate(authorityId, spaceId, latitude, longitude, altitude
     }
 }
 
-// TODO: maybe not needed
+// add delegation
+// used in populateAuthoritiesCollection() function only
 async function addDelegation(authorityId, parentSapceId, delegatedSpaceId, delegatorId, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
@@ -297,7 +293,9 @@ async function addDelegation(authorityId, parentSapceId, delegatedSpaceId, deleg
     }
 }
 
-// TODO: maybe not needed
+// remove delegation
+// currently not used
+/*
 async function removeDelegation(authorityId, parentSpaceId, delegatedSpaceId, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
@@ -319,8 +317,10 @@ async function removeDelegation(authorityId, parentSpaceId, delegatedSpaceId, si
         }
     }
 }
+*/
 
-// TODO: maybe not needed
+// add delegation coordinate
+// used in populateAuthoritiesCollection() function only
 async function addDelegationCoordinate(authorityId, parentSpaceId, delegatedSpaceId, latitude, longitude, altitude, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
@@ -345,7 +345,8 @@ async function addDelegationCoordinate(authorityId, parentSpaceId, delegatedSpac
     }
 }
 
-// TODO: maybe not needed
+// add restriction
+// used in populateAuthoritiesCollection() function only
 async function addRestriction(authorityId, spaceId, permission, appId, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
@@ -365,7 +366,9 @@ async function addRestriction(authorityId, spaceId, permission, appId, signature
     }
 }
 
-// TODO: maybe not needed
+// remove restriction
+// currently not used
+/*
 async function removeRestriction(authorityId, spaceId, permission, appId, signature) {
     const authority = await Authority.findOne({id: authorityId});
 
@@ -386,6 +389,7 @@ async function removeRestriction(authorityId, spaceId, permission, appId, signat
         }
     }
 }
+*/
 
 /**************************************************/
 
@@ -405,10 +409,35 @@ mongoose.connect(Constants.DATABASE.URL_CLOUD, {useNewUrlParser: true})
 // initialize web server
 const app = express();app.use(express.json());
 
-// TODO: to be reviewed if it needs to be removed at later stage
 // generate keypair
 app.get("/debug/generateKeyPair", cors(), (req, res) => {
-    res.send(generateKeyPair());
+    res.send(Crypto.Rsa.generateKeyPair());
+});
+
+// sign signature
+app.get("/debug/sign/:message/:privateKey", cors(), (req, res) => {
+    try {
+        res.send(Crypto.Rsa.sign(req.params.message, req.params.privateKey));
+    } catch (e) {
+        res.send({
+            result: "fail",
+            message: "Signature generation failed."
+        });
+    }
+});
+
+// verify signature
+app.get("/debug/verify/:message/:publicKey/:signature", cors(), (req, res) => {
+    try {
+        res.send({
+            result: Crypto.Rsa.verify(req.params.message, req.params.publicKey, req.params.signature)
+        });
+    } catch (e) {
+        res.send({
+            result: "fail",
+            message: "Signature verification failed."
+        });
+    }
 });
 
 // clear database content: Authorities collection and CertificateAuthorityRecords collection
@@ -467,8 +496,8 @@ app.get("/registerAuthority/:authorityId/:signature", cors(), (req, res) => {
                 message: "Space authority is already registered in the server."
             });
         } else {
-            // if signature is not verified, do not register it
             getCertificateAuthorityRecord(req.params.authorityId).then((record) => {
+                // if record is not found in certificate authority database
                 if (!record) {
                     res.send({
                         result: "fail",
@@ -476,6 +505,7 @@ app.get("/registerAuthority/:authorityId/:signature", cors(), (req, res) => {
                     });
                 }
                 else {
+                    // if signature is not verified
                     if (!Crypto.Rsa.verify(req.params.authorityId, record.publicKey, req.params.signature)) {
                         res.send({
                             result: "fail",
