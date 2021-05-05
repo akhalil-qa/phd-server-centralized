@@ -216,9 +216,9 @@ async function addAuthority(id, signature) {
 }
 
 // update authority document
-// data supplied must be stringified json object
+// spaceList supplied must be stringified json object
 async function updateAuthority(id, spaceList, signature) {
-    data = JSON.parse(data);
+    spaceList = JSON.parse(spaceList);
     const authority = await Authority.findOne({id: id});
     authority.spaceList = spaceList;
     authority.signature = signature;
