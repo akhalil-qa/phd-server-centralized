@@ -560,6 +560,9 @@ app.get("/loginAuthority/:authorityId/:timestamp/:signature", cors(), (req, res)
 
 // update space authority details
 app.get("/updateAuthority/:authorityId/:data/:signature", cors(), (req, res) => {
+
+    res.send(req.params.data.signature);
+    return;
         // if no authority record found, do not update
         getAuthorityRecord(req.params.authorityId).then((record) => {
             if (!record) {
