@@ -217,11 +217,11 @@ async function addAuthority(id, signature) {
 
 // update authority document
 // data supplied must be stringified json object
-async function updateAuthority(id, data) {
+async function updateAuthority(id, spaceList, signature) {
     data = JSON.parse(data);
     const authority = await Authority.findOne({id: id});
-    authority.spaceList = data.spaceList;
-    authority.signature = data.signature;
+    authority.spaceList = spaceList;
+    authority.signature = signature;
     authority.timestamp = new Date().getTime();
     const result = await authority.save();
     console.log("Authority " + id  + " updated.");
@@ -559,10 +559,8 @@ app.get("/loginAuthority/:authorityId/:timestamp/:signature", cors(), (req, res)
 });
 
 // update space authority details
-app.get("/updateAuthority/:authorityId/:data/:signature", cors(), (req, res) => {
+app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res) => {
 
-    res.send(req.params.data.signature);
-    return;
         // if no authority record found, do not update
         getAuthorityRecord(req.params.authorityId).then((record) => {
             if (!record) {
@@ -581,13 +579,13 @@ app.get("/updateAuthority/:authorityId/:data/:signature", cors(), (req, res) => 
                             message: "Cannot obtain authority's public key. Authority is not registered with CA."
                         });
                     } else {
-                        if (!Crypto.Rsa.verify(req.params.data, record.publicKey, req.params.signature)) {
+                        if (!Crypto.Rsa.verify(req.params.spaceList, record.publicKey, req.params.signature)) {
                             res.send({
                                 result: "fail",
                                 message: "Signature cannot be verified by the server."
                             });
                         } else {
-                            updateAuthority(req.params.authorityId, req.params.data).then((result) => {
+                            updateAuthority(req.params.authorityId, req.params.spaceList, req.params.signature).then((result) => {
                                 res.send(result);
                             });
                         }
