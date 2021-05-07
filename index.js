@@ -589,7 +589,7 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
                         */
                         
                         if (!Crypto.Rsa.verify(JSON.parse(req.params.spaceList), record.publicKey, req.params.signature)) {
-                            res.send(result: "not verified");
+                            res.send({result: "not verified"});
                             /*
                             res.send({
                                 result: "fail",
@@ -598,7 +598,7 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
                             */
                         }
                         else {
-                            res.send(result: "verified");
+                            res.send({result: "verified"});
                         }
                         /*
                         else {
