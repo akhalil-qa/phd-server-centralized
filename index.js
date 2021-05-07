@@ -581,7 +581,7 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
                     } else {
 
                         res.send({
-                            spaceList: req.params.spaceList,
+                            spaceList: JSON.parse(req.params.spaceList),
                             publicKey: record.publichKey,
                             signature: req.params.signature
                         });
