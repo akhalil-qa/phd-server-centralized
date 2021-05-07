@@ -578,35 +578,21 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
                             result: "fail",
                             message: "Cannot obtain authority's public key. Authority is not registered with CA."
                         });
-                    } else {
-
-                        /* succss
-                        res.send({
-                            spaceList: JSON.parse(req.params.spaceList),
-                            publicKey: record.publicKey,
-                            signature: req.params.signature
-                        });
-                        */
-                        
+                    } else {    
+                        console.log("[AHMED] ==> will verify now.");                   
                         if (!Crypto.Rsa.verify(JSON.parse(req.params.spaceList), record.publicKey, req.params.signature)) {
-                            res.send({result: "not verified"});
-                            /*
+                            console.log("[AHMED] ==> signautre not verified."); 
                             res.send({
                                 result: "fail",
                                 message: "Signature cannot be verified by the server."
                             });
-                            */
                         }
                         else {
-                            res.send({result: "verified"});
-                        }
-                        /*
-                        else {
+                            console.log("[AHMED] ==> signautre verified. Will update now."); 
                             updateAuthority(req.params.authorityId, req.params.spaceList, req.params.signature).then((result) => {
                                 res.send(result);
                             });
                         }
-                        */
                     }
                 });
             }
