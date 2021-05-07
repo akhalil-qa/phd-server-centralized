@@ -561,8 +561,9 @@ app.get("/loginAuthority/:authorityId/:timestamp/:signature", cors(), (req, res)
 // update space authority details
 app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res) => {
 
+        spaceList = JSON.parse(req.params.spaceList);
         res.send({
-            spaceList: req.params.spaceList,
+            spaceList: spaceList,
             signature: req.params.signature
         });
 
