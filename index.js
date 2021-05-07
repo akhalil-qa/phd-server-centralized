@@ -579,6 +579,13 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
                             message: "Cannot obtain authority's public key. Authority is not registered with CA."
                         });
                     } else {
+
+                        res.send({
+                            spaceList: req.params.spaceList,
+                            publicKey: record.publichKey,
+                            signature: req.params.signature
+                        });
+                        /*
                         if (!Crypto.Rsa.verify(JSON.parse(req.params.spaceList), record.publicKey, req.params.signature)) {
                             res.send({
                                 result: "fail",
@@ -589,6 +596,7 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
                                 res.send(result);
                             });
                         }
+                        */
                     }
                 });
             }
