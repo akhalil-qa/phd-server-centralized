@@ -561,7 +561,14 @@ app.get("/loginAuthority/:authorityId/:timestamp/:signature", cors(), (req, res)
 // update space authority details
 app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res) => {
 
+        res.send({
+            spaceList: req.params.spaceList,
+            signature: req.params.signature
+        });
+
+
         // if no authority record found, do not update
+        /*
         getAuthorityRecord(req.params.authorityId).then((record) => {
             if (!record) {
                 res.send({
@@ -593,6 +600,7 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
                 });
             }
         });
+        */
 });
 
 // start web server
