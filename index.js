@@ -581,14 +581,13 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
                     } else {    
                         console.log("==========="); // to be removed TODO AHMED
                         console.log(req.params.spaceList); // to be removed TODO AHMED
-                        if (Crypto.Rsa.verify(req.params.spaceList, record.publicKey, req.params.signature)) {
+                        if (!Crypto.Rsa.verify(req.params.spaceList, record.publicKey, req.params.signature)) {
                             res.send({
                                 result: "fail",
                                 message: "Signature cannot be verified by the server."
                             });
                         }
                         else {
-                            console.log("[AHMED] ==> signautre verified. Will update now."); // TODO AHMED
                             updateAuthority(req.params.authorityId, req.params.spaceList, req.params.signature).then((result) => {
                                 res.send(result);
                             });
