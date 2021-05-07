@@ -580,18 +580,29 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
                         });
                     } else {
 
+                        /* succss
                         res.send({
                             spaceList: JSON.parse(req.params.spaceList),
                             publicKey: record.publicKey,
                             signature: req.params.signature
                         });
-                        /*
+                        */
+                        
                         if (!Crypto.Rsa.verify(JSON.parse(req.params.spaceList), record.publicKey, req.params.signature)) {
+                            res.send({
+                                spaceList: JSON.parse(req.params.spaceList),
+                                publicKey: record.publicKey,
+                                signature: req.params.signature
+                            });
+                            /*
                             res.send({
                                 result: "fail",
                                 message: "Signature cannot be verified by the server."
                             });
-                        } else {
+                            */
+                        }
+                        /*
+                        else {
                             updateAuthority(req.params.authorityId, req.params.spaceList, req.params.signature).then((result) => {
                                 res.send(result);
                             });
