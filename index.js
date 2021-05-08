@@ -581,6 +581,7 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
                     } else {    
                         console.log("==========="); // to be removed TODO AHMED
                         console.log(req.params.spaceList); // to be removed TODO AHMED
+                        console.log(req.params.signature); // to be removed TODO AHMED
                         if (!Crypto.Rsa.verify(req.params.spaceList, record.publicKey, req.params.signature)) {
                             res.send({
                                 result: "fail",
