@@ -416,6 +416,8 @@ app.get("/debug/generateKeyPair", cors(), (req, res) => {
 
 // sign signature
 app.get("/debug/sign/:message/:privateKey", cors(), (req, res) => {
+    console.log("=== SIGN ==="); // to be removed TODO AHMED
+    console.log(req.params.message); // to be removed TODO AHMED
     try {
         res.send(Crypto.Rsa.sign(req.params.message, req.params.privateKey));
     } catch (e) {
