@@ -416,10 +416,10 @@ app.get("/debug/generateKeyPair", cors(), (req, res) => {
 
 // sign signature
 app.get("/debug/sign/:message/:privateKey", cors(), (req, res) => {
-    console.log("=== SIGN ,essage ==="); // to be removed TODO AHMED
+    console.log("=== 'message' sent to SIGN api ===") // to be removed TODO AHMED
     console.log(req.params.message); // to be removed TODO AHMED
     try {
-        console.log("=== SIGN signature ==="); // to be removed TODO AHMED
+        console.log("=== 'signature' sent to SIGN API ==="); // to be removed TODO AHMED
         console.log(Crypto.Rsa.sign(req.params.message, req.params.privateKey)); // to be removed TODO AHMED
         res.send(Crypto.Rsa.sign(req.params.message, req.params.privateKey));
     } catch (e) {
@@ -583,8 +583,9 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
                             message: "Cannot obtain authority's public key. Authority is not registered with CA."
                         });
                     } else {    
-                        console.log("=== updateAuthoirty ===") // to be removed TODO AHMED
+                        console.log("=== 'spaceList' sent to UPDATEAUTHORITY api ===") // to be removed TODO AHMED
                         console.log(req.params.spaceList); // to be removed TODO AHMED
+                        console.log("=== 'signature' sent to UPDATEAUTHORITY api ===") // to be removed TODO AHMED
                         console.log(req.params.signature); // to be removed TODO AHMED
                         if (!Crypto.Rsa.verify(req.params.spaceList, record.publicKey, req.params.signature)) {
                             res.send({
