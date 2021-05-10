@@ -73,6 +73,85 @@ async function clearCertificateAuthorityRecordsCollection() {
 
 // populate authorities collection with dummy intial documents
 async function populateAuthoritiesCollection() {
+
+    const qatar = "State of Qatar";
+    const qatarPublicKey = "-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvHU3nD9anne474u2b//Z\nJT+Izryb2eINiw8h05XrSDf9kuEEFfnfPZZDrvrCeosf0BLqMS5+YWKhsvbdHcyY\n8nLVkHIjmvis03eCM/AMwN/bFKO21kwE1w/Q+QJ8VKVBvZ/wEWOjGnUOJylqyrmP\nPCww+lPV4Nn6Ua/Zu1UwN+29g+nmlL3lETAbcoBeKPOF2mL37p25IyEMSxfOsQkP\nFmWYfrM/yeUByq8KfS1Bo6QbGEt0zLL5Ul6IquFieoK7TLyC2RWrbtlc0BYQv+1d\nnYwZeA6OL8BNcqu8Ew9vdc6+q0mg/bAny7V9wqSUbDLpItYL9OB4Um63AfjeAt7S\nDqCk+u+RmNovkTMxrcmO1cCXXD7sPNfmQCfhWh04VRa7bbVtszmabMynTvu+Ornc\nAxhsedYpeGCZtZdy2VIjil+gXk58fpSdOfdXoAjEWxEZqrZ0EKgBeOvnqI+PGnPE\nV5z3dHym7jzuzr6GZ9vFnrf4D7R6i69nYFEc1U083x0dRM50EXP0XhMZextY71jF\nzaDBUGIiO6MKAGSqbgGQ8rfvbR9n6010y5FBm5dntP5dad9Jq7iqgKGQJOXuXpy0\n11YL8bCImxUqhchfRvSQOuPmB5psf0ShTB2BIx1umvzb6wWhCe1Lxz7POAOFp8uS\ngBCsbFvy5NquBISqSnpGeJkCAwEAAQ==\n-----END PUBLIC KEY-----\n";
+    const qatarPrivateKey = "-----BEGIN PRIVATE KEY-----\nMIIJQgIBADANBgkqhkiG9w0BAQEFAASCCSwwggkoAgEAAoICAQC8dTecP1qed7jv\ni7Zv/9klP4jOvJvZ4g2LDyHTletIN/2S4QQV+d89lkOu+sJ6ix/QEuoxLn5hYqGy\n9t0dzJjyctWQciOa+KzTd4Iz8AzA39sUo7bWTATXD9D5AnxUpUG9n/ARY6MadQ4n\nKWrKuY88LDD6U9Xg2fpRr9m7VTA37b2D6eaUveURMBtygF4o84XaYvfunbkjIQxL\nF86xCQ8WZZh+sz/J5QHKrwp9LUGjpBsYS3TMsvlSXoiq4WJ6grtMvILZFatu2VzQ\nFhC/7V2djBl4Do4vwE1yq7wTD291zr6rSaD9sCfLtX3CpJRsMuki1gv04HhSbrcB\n+N4C3tIOoKT675GY2i+RMzGtyY7VwJdcPuw81+ZAJ+FaHThVFrtttW2zOZpszKdO\n+746udwDGGx51il4YJm1l3LZUiOKX6BeTnx+lJ0591egCMRbERmqtnQQqAF46+eo\nj48ac8RXnPd0fKbuPO7OvoZn28Wet/gPtHqLr2dgURzVTTzfHR1EznQRc/ReExl7\nG1jvWMXNoMFQYiI7owoAZKpuAZDyt+9tH2frTXTLkUGbl2e0/l1p30mruKqAoZAk\n5e5enLTXVgvxsIibFSqFyF9G9JA64+YHmmx/RKFMHYEjHW6a/NvrBaEJ7UvHPs84\nA4Wny5KAEKxsW/Lk2q4EhKpKekZ4mQIDAQABAoICAHwvec+6Z8qY9gLUPAodvEex\nUEN7QfAX5/jEpfO5jOtwCeap5HleyN7akAtULqd12ibQ8AYsrxcZWZiG2Dp0wiyx\nw02GCTRrveczj1cOTjkiykkVgLxCJ8ZYI8qS+r8EjweXxyiOUcJzdDoWLssb7+kk\n7blnWT7sJOmDSaUKg9W3EfVFQq6tW68x1kRjlqjBoGjCYsKYqJEfi+xH6en7IDgQ\nBqcnE1fFUqLvKahHFEPzNe+SeYsSPP0sUj7Yen5ke2wbpNXMU8Wd8m0kvTDcB55z\n3ayhWszYmbCAvlSJDVfCPx68TBwf4nl4RUDoFu4dtkdAaWyaJm+biXkBN7sIfb4H\nSPO8DjrAtTcfnV8hq56jWDWE9MRpEYvOmejETfzQkUVjPTF9Sibhqk+Njm1JGVMv\nFIRKlFr+OCs5mi8cJDNJlVTaew4A3zP/87zRy8FPB3U0bs67bfi7LKDq3/TIv2ML\nbKqDwrs0ZahdisQnh6NbYVqWf/nJPrCgFRfm6V6/+skVxm7igJcfBNz7FCEGBmZS\nrDvfcZALDMqZTW22lPdtFdX9j2zhuL/2Na5Tr5ERoq8IIddJ72Z0hsf6uiHcEmKj\nCD5ph+Q0k6285+wCRbKLESyCuMMEw81yquk56qY0WVXl7hNSaiiQcWDTUP+lksav\nZdkxg4i68526qERamVApAoIBAQDvgkPDFpuywgN8gwFalnXfTSHjhfhdxc8k5zTX\npyX43aobWf7IqOPB7wtJj6iKnFShV1ghiZFLuJwnT7rmecKKxIdIDJH/eOnMdcNS\nFKhXzTLQZCI2/9VTtg+0RxyUNy0gUMnxDkS6Up1JnPKtYrpu8lXWW3FWkCOrTRSt\ng1jq/ytCgmmtxq8nXRcN2+kzYeXtzRT4RoWycSvidB3Vp+A1AOF2tJ6hR1sgxPVw\n4CAeOzl36Z9fsUDnmvActOInfAn/mLkM+TzpX1VrHpcUVfRwcsTOcziQAL+ilTv8\nNySQqE/EJezmojEHc+RcBBn+rs49ciks2Yt9tbdiYuO6JbtfAoIBAQDJbxiAxk2m\nDASM1zQpw5pezRkMJ4HX1ZpmI8xjalB/vxHn29Yk4SZVG3EjwnQ3V7MQEfhMiiZm\nP/jQAX3qjwykqWQxJ2BUhWsAf+33ZzS0exJa9ZTGgWgqvuqaweHRiXfdPbhOppMz\n9E/iFZYgXLu+nWJfni6yLrWABGpfrDZW9LqdYvTRmT2JCY8+SqwZ5MY/bckIHIRY\nBWgZgKRxFZotBJpEzspM8WFRVQ9HWMhbkIy+M3xxyJQ47MwplkPtwdyQWRs//n4q\ntCO8B3RDqb/cUMZ0coy0U20bcgnu49TxM5TPhi3evE0WNWSUg6iUN3ovcCGWtqYj\nRCZmVKNgGUcHAoIBAHCH+96FmNH8ZjbyNoihePBaBTopj/A/KHxmRWWtmyG6xFnl\nhtgwwhI0hlEhtkap/PlxWG8pe6LgMj4mL+JqAwXAIO+xOEeYQAFYs1S1cAMQ3ncb\nFRhSS6DxQZ+qabsZ0ZIFY1xnH9OLTWtw2nSslnvaUIpOnInXX2r05GpB9F01VtYB\nADYty83q5xIT6RXDQYzhdqDQQbD9i2jytbHVFnrQ1x427vFH3YEgCVHnfC+4E+BL\nXB5R4fTvzzEtq7RxiyEUWJ3H3N6pdDDIRqO/XwIWanG1oTXHpEJ3a5+tKPjum8vF\nJfGW8wJVaU3yf2QyLaShJsdzzx5ZarhHTkf/wnECggEAelBGbbN8ZO55ONhYaV/H\n9fbOVc4Ljva6eXkVW+yrktZ/1e1sfBpnP1iZe+BQ12YeagyvXDKrHH2N5ShywCI6\nyCW/nAVP/iLBlZ0Y75iwrULqI2dp/puHmCUzqeM+7xBtQ1998ew+CFc6xorbDS2i\nJx3EJVGVA0dPmLuVqCCXIngadQUoqblGX1b5rxaCqHp9UvikEJPYXOZzjsDJmY1H\ngDyCPHPg7ZXIxS1ESMuFZexBOiFjWGg2cNaBJmODPfTwrIoe/N3Y2K9n334bQBbs\nVKiLyRvhioH6B6dYlsGrhQcQPm84nT50BJ9JQtErZUzGmdWZ371q5pE0TADq76iJ\nswKCAQEA2+DTybSPsxmzKw3b6OOksKz0RPCG9JnlCc2If4o+1KO00v0fbeByaoDM\nVNP7hUE1YuQg/ljXx26XvvbzN/4V8z0ri3FKVWgsPlRAY3rpuTkl/ZX2AxkgVboD\nPHoy5LYdQdNVi4owMmUrgfPY6gsGxbXYbo6KWK7An+uW3zv5vDKghN72lTJMOa1V\nxoFrH63/MAISfk4fW8DX9l9Ey945ebaXRIB7M2fX2EfX84qRlLs3K60WH1KTpy7r\nvKFx6xYty3ONpQxnTB1PX86cxHAoqgHWhJwF5QcpL5uNzce0MhreYFLsEDFmM+9i\nDt2G1kNBXHa52naKZI9srh9WUgAftg==\n-----END PRIVATE KEY-----\n";
+    addCertificateAuthorityRecord(qatar, qatarPublicKey);
+    await addAuthority(qatar, "");
+
+    const doha = "Doha";
+    await addSpace(qatar, doha, "");
+    await addCoordinate(qatar, doha, 25.15613, 51.43062, 0, "");
+    await addCoordinate(qatar, doha, 25.19466, 51.62013, 0, "");
+    await addCoordinate(qatar, doha, 25.21144, 51.61945, 0, "");
+    await addCoordinate(qatar, doha, 25.24374, 51.60022, 0, "");
+    await addCoordinate(qatar, doha, 25.25367, 51.62837, 0, "");
+    await addCoordinate(qatar, doha, 25.29776, 51.60915, 0, "");
+    await addCoordinate(qatar, doha, 25.28782, 51.55078, 0, "");
+    await addCoordinate(qatar, doha, 25.35796, 51.53636, 0, "");
+    await addCoordinate(qatar, doha, 25.35424, 51.57481, 0, "");
+    await addCoordinate(qatar, doha, 25.38091, 51.56177, 0, "");
+    await addCoordinate(qatar, doha, 25.38898, 51.53362, 0, "");
+    await addCoordinate(qatar, doha, 25.40201, 51.53224, 0, "");
+    await addCoordinate(qatar, doha, 25.37719, 51.46907, 0, "");
+    await addCoordinate(qatar, doha, 25.39022, 51.46426, 0, "");
+    await addCoordinate(qatar, doha, 25.37905, 51.44023, 0, "");
+    await addCoordinate(qatar, doha, 25.34431, 51.45671, 0, "");
+    await addCoordinate(qatar, doha, 25.33003, 51.44779, 0, "");
+    await addCoordinate(qatar, doha, 25.30024, 51.44710, 0, "");
+    await addCoordinate(qatar, doha, 25.28334, 51.43337, 0, "");
+    await addCoordinate(qatar, doha, 25.22510, 51.43062, 0, "");
+    await addCoordinate(qatar, doha, 25.20584, 51.39629, 0, "");
+    await addCoordinate(qatar, doha, 25.15613, 51.43062, 0, "");
+
+    const wakra = "Wakra";
+    await addSpace(qatar, wakra, "");
+    await addCoordinate(qatar, wakra, 25.19483, 51.61958, 0, "");
+    await addCoordinate(qatar, wakra, 25.16920, 51.61082, 0, "");
+    await addCoordinate(qatar, wakra, 25.14620, 51.62061, 0, "");
+    await addCoordinate(qatar, wakra, 25.13735, 51.61735, 0, "");
+    await addCoordinate(qatar, wakra, 25.13937, 51.59726, 0, "");
+    await addCoordinate(qatar, wakra, 25.13098, 51.59331, 0, "");
+    await addCoordinate(qatar, wakra, 25.13066, 51.58696, 0, "");
+    await addCoordinate(qatar, wakra, 25.14216, 51.58078, 0, "");
+    await addCoordinate(qatar, wakra, 25.16470, 51.58216, 0, "");
+    await addCoordinate(qatar, wakra, 25.18815, 51.58696, 0, "");
+    await addCoordinate(qatar, wakra, 25.19483, 51.61958, 0, "");
+
+    const rayyan = "Rayyan";
+    await addSpace(qatar, rayyan, "");
+    await addCoordinate(qatar, rayyan, 25.20074, 51.52771, 0, "");
+    await addCoordinate(qatar, rayyan, 25.27154, 51.47484, 0, "");
+    await addCoordinate(qatar, rayyan, 25.35162, 51.43913, 0, "");
+    await addCoordinate(qatar, rayyan, 25.34975, 51.39656, 0, "");
+    await addCoordinate(qatar, rayyan, 25.37333, 51.39793, 0, "");
+    await addCoordinate(qatar, rayyan, 25.38822, 51.36223, 0, "");
+    await addCoordinate(qatar, rayyan, 25.38760, 51.26815, 0, "");
+    await addCoordinate(qatar, rayyan, 25.70974, 51.26541, 0, "");
+    await addCoordinate(qatar, rayyan, 25.71964, 51.11435, 0, "");
+    await addCoordinate(qatar, rayyan, 25.77901, 51.11435, 0, "");
+    await addCoordinate(qatar, rayyan, 25.80869, 50.93307, 0, "");
+    await addCoordinate(qatar, rayyan, 25.71469, 50.89462, 0, "");
+    await addCoordinate(qatar, rayyan, 25.64043, 50.84518, 0, "");
+    await addCoordinate(qatar, rayyan, 25.50169, 50.75317, 0, "");
+    await addCoordinate(qatar, rayyan, 24.79561, 50.87127, 0, "");
+    await addCoordinate(qatar, rayyan, 24.74822, 50.80810, 0, "");
+    await addCoordinate(qatar, rayyan, 24.54352, 50.92346, 0, "");
+    await addCoordinate(qatar, rayyan, 24.47854, 51.11572, 0, "");
+    await addCoordinate(qatar, rayyan, 24.99243, 51.11572, 0, "");
+    await addCoordinate(qatar, rayyan, 24.99491, 51.22009, 0, "");
+    await addCoordinate(qatar, rayyan, 25.11186, 51.22009, 0, "");
+    await addCoordinate(qatar, rayyan, 25.04967, 51.40960, 0, "");
+    await addCoordinate(qatar, rayyan, 25.13984, 51.39587, 0, "");
+    await addCoordinate(qatar, rayyan, 25.15538, 51.43020, 0, "");
+    await addCoordinate(qatar, rayyan, 25.20571, 51.39656, 0, "");
+    await addCoordinate(qatar, rayyan, 25.22497, 51.43226, 0, "");
+    await addCoordinate(qatar, rayyan, 25.17092, 51.47071, 0, "");
+    await addCoordinate(qatar, rayyan, 25.20074, 51.52771, 0, "");
+
+    // dummy data for testing only
+    /*
     const sa1 = "Space Authority 1";
     const sa2 = "Space Authority 2";
     const sa3 = "Space Authority 3";
@@ -169,6 +248,7 @@ async function populateAuthoritiesCollection() {
     await addCoordinate(sa6, s6, 6, 11, 0, "");
     await addCoordinate(sa6, s6, 6, 10, 0, "");
     await addRestriction(sa6, s6, "*", "com.snapchat.android", "");
+    */
 }
 
 // add CertificateAuthorityRecord document
@@ -416,11 +496,7 @@ app.get("/debug/generateKeyPair", cors(), (req, res) => {
 
 // sign signature
 app.get("/debug/sign/:message/:privateKey", cors(), (req, res) => {
-    console.log("=== 'message' sent to SIGN api ===") // to be removed TODO AHMED
-    console.log(req.params.message); // to be removed TODO AHMED
     try {
-        console.log("=== 'signature' sent to SIGN API ==="); // to be removed TODO AHMED
-        console.log(Crypto.Rsa.sign(req.params.message, req.params.privateKey)); // to be removed TODO AHMED
         res.send(Crypto.Rsa.sign(req.params.message, req.params.privateKey));
     } catch (e) {
         res.send({
@@ -453,7 +529,6 @@ app.get("/debug/clearDatabase", cors(), (req, res) => {
 
 // populate database with initial data
 app.get("/debug/populateDatabase", cors(), (req, res) => {
-    addCertificateAuthorityRecord(Constants.WEB_SERVER.NAME, serveyKeyPair.publicKey);
     populateAuthoritiesCollection();
     res.send("Database populated.");
 });
@@ -583,10 +658,6 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
                             message: "Cannot obtain authority's public key. Authority is not registered with CA."
                         });
                     } else {    
-                        console.log("=== 'spaceList' sent to UPDATEAUTHORITY api ===") // to be removed TODO AHMED
-                        console.log(req.params.spaceList); // to be removed TODO AHMED
-                        console.log("=== 'signature' sent to UPDATEAUTHORITY api ===") // to be removed TODO AHMED
-                        console.log(req.params.signature); // to be removed TODO AHMED
                         if (!Crypto.Rsa.verify(req.params.spaceList, record.publicKey, req.params.signature)) {
                             res.send({
                                 result: "fail",
