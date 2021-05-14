@@ -647,9 +647,11 @@ app.get("/loginAuthority/:authorityId/:timestamp/:signature", cors(), (req, res)
 
 // update space authority details
 app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res) => {
+        console.log("TODO inside /updateAuthority");
 
         // if no authority record found, do not update
         getAuthorityRecord(req.params.authorityId).then((record) => {
+            console.log("TODO inside getAuthorityRecord");
             if (!record) {
                 res.send({
                     result: "fail",
@@ -659,13 +661,15 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
             } else {
                 // if signautre is not verified, do not update
                 getCertificateAuthorityRecord(req.params.authorityId).then((record) => {
+                    console.log("TODO inside getCertificateAuthorityRecord");
                     // if authority is not registered in CA, do not update
                     if (!record) {
                         res.send({
                             result: "fail",
                             message: "Cannot obtain authority's public key. Authority is not registered with CA."
                         });
-                    } else {    
+                    } else { 
+                        console.log("TODO inside /updateAuthority before verify");   
                         if (!Crypto.Rsa.verify(req.params.spaceList, record.publicKey, req.params.signature)) {
                             res.send({
                                 result: "fail",
@@ -673,6 +677,7 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
                             });
                         }
                         else {
+                            console.log("TODO inside /updateAuthority before updateAuthority");  
                             updateAuthority(req.params.authorityId, req.params.spaceList, req.params.signature).then((result) => {
                                 res.send(result);
                             });
