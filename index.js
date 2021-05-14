@@ -502,7 +502,8 @@ app.get("/debug/generateKeyPair", cors(), (req, res) => {
 });
 
 // sign signature
-app.get("/debug/sign/:message/:privateKey", cors(), (req, res) => {
+app.get("/debug/sign/:message/:privateKey", cors(), (req, res) => {c
+    console.log("TODO: inside app.get(/debug/sign/:message/:privateKey");
     try {
         res.send(Crypto.Rsa.sign(req.params.message, req.params.privateKey));
     } catch (e) {
