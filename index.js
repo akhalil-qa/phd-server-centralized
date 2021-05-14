@@ -688,6 +688,51 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
         });
 });
 
+// TODO
+// update space authority details
+app.post("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res) => {
+    console.log("TODO NEW inside /updateAuthority");
+
+    // if no authority record found, do not update
+    getAuthorityRecord(req.body.params.authorityId).then((record) => {
+        console.log("TODO NEW inside getAuthorityRecord");
+        if (!record) {
+            res.send({
+                result: "fail",
+                message: "Authority is not found in the database."
+            });
+            return;
+        } else {
+            // if signautre is not verified, do not update
+            getCertificateAuthorityRecord(req.body.authorityId).then((record) => {
+                console.log("TODO NEW inside getCertificateAuthorityRecord");
+                // if authority is not registered in CA, do not update
+                if (!record) {
+                    res.send({
+                        result: "fail",
+                        message: "Cannot obtain authority's public key. Authority is not registered with CA."
+                    });
+                } else { 
+                    console.log("TODO NEW inside /updateAuthority before verify");   
+                    if (!Crypto.Rsa.verify(req.body.spaceList, record.publicKey, req.body.signature)) {
+                        res.send({
+                            result: "fail",
+                            message: "Signature cannot be verified by the server."
+                        });
+                    }
+                    else {
+                        console.log("TODO NEW inside /updateAuthority before updateAuthority");  
+                        updateAuthority(req.body.authorityId, req.body.spaceList, req.body.signature).then((result) => {
+                            res.send(result);
+                        });
+                    }
+                }
+            });
+        }
+    });
+});
+
+
 // start web server
 const port = process.env.PORT || Constants.WEB_SERVER.PORT;
 app.listen(port, () => {console.log(`Listening in port ${port}`)});
