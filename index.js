@@ -690,7 +690,7 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
 
 // TODO
 // update space authority details
-app.post("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res) => {
+app.post("/updateAuthority", cors(), (req, res) => {
     console.log("TODO NEW inside /updateAuthority");
 
     // if no authority record found, do not update
