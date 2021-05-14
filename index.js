@@ -694,7 +694,7 @@ app.post("/updateAuthority", cors(), (req, res) => {
     console.log("TODO NEW inside /updateAuthority");
 
     // if no authority record found, do not update
-    getAuthorityRecord(req.body.params.authorityId).then((record) => {
+    getAuthorityRecord(req.body.authorityId).then((record) => {
         console.log("TODO NEW inside getAuthorityRecord");
         if (!record) {
             res.send({
