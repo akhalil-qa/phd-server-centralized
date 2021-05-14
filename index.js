@@ -725,6 +725,42 @@ app.get("/loginAuthority/:authorityId/:timestamp/:signature", cors(), (req, res)
     });
 });
 
+// TODO: space authority login
+app.post("/loginAuthority", cors(), (req, res) => {
+    // if no authority record found, do not log in
+    getAuthorityRecord(req.body.authorityId).then((record) => {
+        if (!record) {
+            res.send({
+                result: "fail",
+                message: "Authority is not found in the database."
+            });
+            return;
+        } else {
+            // if signautre is not verified, do not log in
+            getCertificateAuthorityRecord(req.body.authorityId).then((record) => {
+                // if authority is not registered in CA, do not log in
+                if (!record) {
+                    res.send({
+                        result: "fail",
+                        message: "Cannot obtain authority's public key. Authority is not registered with CA."
+                    });
+                } else {
+                    if (!Crypto.Rsa.verify(req.body.timestamp, record.publicKey, req.body.signature)) {
+                        res.send({
+                            result: "fail",
+                            message: "Signature cannot be verified by the server."
+                        });
+                    } else {
+                        getAuthorityRecord(req.body.authorityId).then((record) => {
+                            res.send(record);
+                        });
+                    }
+                }
+            });
+        }
+    });
+});
+
 // update space authority details
 app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res) => {
         console.log("TODO inside /updateAuthority");
