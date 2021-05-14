@@ -36,7 +36,6 @@ const Crypto  = {
             var signer = crypto.createSign(Constants.CRYPTO.RSA.SIGNATURE_ALGORITHM);
             signer.update(message);
             var signature = signer.sign(privateKey, "base64");
-            console.log("TODO signature: " + signature);
             return signature;
         },
 
