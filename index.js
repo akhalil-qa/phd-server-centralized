@@ -514,11 +514,37 @@ app.get("/debug/sign/:message/:privateKey", cors(), (req, res) => {
     }
 });
 
+// TODO: sign signature
+app.post("/debug/sign", cors(), (req, res) => {
+    try {
+        res.send(Crypto.Rsa.sign(req.body.message, req.body.privateKey));
+    } catch (e) {
+        res.send({
+            result: "fail",
+            message: "Signature generation failed."
+        });
+    }
+});
+
 // verify signature
 app.get("/debug/verify/:message/:publicKey/:signature", cors(), (req, res) => {
     try {
         res.send({
             result: Crypto.Rsa.verify(req.params.message, req.params.publicKey, req.params.signature)
+        });
+    } catch (e) {
+        res.send({
+            result: "fail",
+            message: "Signature verification failed."
+        });
+    }
+});
+
+// TODO: verify signature
+app.post("/debug/verify", cors(), (req, res) => {
+    try {
+        res.send({
+            result: Crypto.Rsa.verify(req.body.message, req.body.publicKey, req.body.signature)
         });
     } catch (e) {
         res.send({
@@ -573,6 +599,24 @@ app.get("/registerKey/:authorityId/:publicKey", cors(), (req, res) => {
  
 });
 
+// TODO: register authority's public key with CA
+app.post("/registerKey", cors(), (req, res) => {
+    
+    // if authority is already registered, do not register it again
+    getCertificateAuthorityRecord(req.body.authorityId).then((record) => {
+        if (record) {
+            res.send({
+                result: "fail",
+                message: "Authority is already registered with CA."
+            });
+        } else {
+            addCertificateAuthorityRecord(req.body.authorityId, req.body.publicKey);
+            res.send({response: "success"});
+        }
+    });
+ 
+});
+
 // register space authority
 app.get("/registerAuthority/:authorityId/:signature", cors(), (req, res) => {
     // if space authority is already registered, do not register it again
@@ -601,6 +645,42 @@ app.get("/registerAuthority/:authorityId/:signature", cors(), (req, res) => {
                     } else {
                         // add space authority to the database
                         addAuthority(req.params.authorityId, req.params.signature);
+                        res.send({result: "success"});
+                    }
+                }
+            });
+        }
+    });
+});
+
+// TODO: register space authority
+app.post("/registerAuthority", cors(), (req, res) => {
+    // if space authority is already registered, do not register it again
+    getAuthorityRecord(req.body.authorityId).then((record) => {
+        if (record) {
+            res.send({
+                result: "fail",
+                message: "Space authority is already registered in the server."
+            });
+        } else {
+            getCertificateAuthorityRecord(req.body.authorityId).then((record) => {
+                // if record is not found in certificate authority database
+                if (!record) {
+                    res.send({
+                        result: "fail",
+                        message: "Cannot obtain its public key from CA."
+                    });
+                }
+                else {
+                    // if signature is not verified
+                    if (!Crypto.Rsa.verify(req.body.authorityId, record.publicKey, req.body.signature)) {
+                        res.send({
+                            result: "fail",
+                            message: "Signature cannot be verified by the server."
+                        });
+                    } else {
+                        // add space authority to the database
+                        addAuthority(req.body.authorityId, req.body.signature);
                         res.send({result: "success"});
                     }
                 }
@@ -688,14 +768,10 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", cors(), (req, res
         });
 });
 
-// TODO
-// update space authority details
+// TODO: update space authority details
 app.post("/updateAuthority", cors(), (req, res) => {
-    console.log("TODO NEW inside /updateAuthority");
-
     // if no authority record found, do not update
     getAuthorityRecord(req.body.authorityId).then((record) => {
-        console.log("TODO NEW inside getAuthorityRecord");
         if (!record) {
             res.send({
                 result: "fail",
@@ -705,7 +781,6 @@ app.post("/updateAuthority", cors(), (req, res) => {
         } else {
             // if signautre is not verified, do not update
             getCertificateAuthorityRecord(req.body.authorityId).then((record) => {
-                console.log("TODO NEW inside getCertificateAuthorityRecord");
                 // if authority is not registered in CA, do not update
                 if (!record) {
                     res.send({
@@ -713,7 +788,6 @@ app.post("/updateAuthority", cors(), (req, res) => {
                         message: "Cannot obtain authority's public key. Authority is not registered with CA."
                     });
                 } else { 
-                    console.log("TODO NEW inside /updateAuthority before verify");   
                     if (!Crypto.Rsa.verify(req.body.spaceList, record.publicKey, req.body.signature)) {
                         res.send({
                             result: "fail",
@@ -721,7 +795,6 @@ app.post("/updateAuthority", cors(), (req, res) => {
                         });
                     }
                     else {
-                        console.log("TODO NEW inside /updateAuthority before updateAuthority");  
                         updateAuthority(req.body.authorityId, req.body.spaceList, req.body.signature).then((result) => {
                             res.send(result);
                         });
@@ -731,7 +804,6 @@ app.post("/updateAuthority", cors(), (req, res) => {
         }
     });
 });
-
 
 // start web server
 const port = process.env.PORT || Constants.WEB_SERVER.PORT;
