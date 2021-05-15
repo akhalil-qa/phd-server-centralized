@@ -608,6 +608,7 @@ app.post("/registerKey", (req, res) => {
 
 // register space authority
 app.post("/registerAuthority", (req, res) => {
+    
     // if space authority is already registered, do not register it again
     getAuthorityRecord(req.body.authorityId).then((record) => {
         if (record) {
