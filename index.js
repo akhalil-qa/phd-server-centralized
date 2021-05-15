@@ -306,7 +306,7 @@ async function addAuthority(id, signature) {
 // spaceList supplied must be stringified json object
 async function updateAuthority(id, spaceList, signature) {
 
-    spaceList = JSON.parse(spaceList);
+    //spaceList = JSON.parse(spaceList);
     const authority = await Authority.findOne({id: id});
     authority.spaceList = spaceList;
     authority.signature = signature;
@@ -688,8 +688,7 @@ app.post("/loginAuthority", (req, res) => {
 
 // update space authority details
 app.post("/updateAuthority", (req, res) => {
-    console.log("HERE =====");
-    console.log(req.body.spaceList);
+    
     // if no authority record found, do not update
     getAuthorityRecord(req.body.authorityId).then((record) => {
         if (!record) {
