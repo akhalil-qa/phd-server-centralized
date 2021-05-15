@@ -789,7 +789,7 @@ app.get("/loginAuthority/:authorityId/:timestamp/:signature", (req, res) => {
 */
 
 // space authority login
-app.post("/loginAuthority", cors(), (req, res) => {
+app.post("/loginAuthority", (req, res) => {
     // if no authority record found, do not log in
     getAuthorityRecord(req.body.authorityId).then((record) => {
         if (!record) {
