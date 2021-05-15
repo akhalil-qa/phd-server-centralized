@@ -306,7 +306,7 @@ async function addAuthority(id, signature) {
 // spaceList supplied must be stringified json object
 async function updateAuthority(id, spaceList, signature) {
 
-    var spaceList = JSON.parse(spaceList);
+    spaceList = JSON.parse(spaceList);
     const authority = await Authority.findOne({id: id});
     authority.spaceList = spaceList;
     authority.signature = signature;
@@ -686,51 +686,10 @@ app.post("/loginAuthority", (req, res) => {
     });
 });
 
-// update space authority details TO BE REMOVED
-/*
-app.get("/updateAuthority/:authorityId/:spaceList/:signature", (req, res) => {
-
-        // if no authority record found, do not update
-        getAuthorityRecord(req.params.authorityId).then((record) => {
-            if (!record) {
-                res.statusCode = 400;
-                res.json({
-                    result: "fail",
-                    message: "Authority is not found in the database."
-                });
-                return;
-            } else {
-                // if signautre is not verified, do not update
-                getCertificateAuthorityRecord(req.params.authorityId).then((record) => {
-                    // if authority is not registered in CA, do not update
-                    if (!record) {
-                        res.statusCode = 400;
-                        res.json({
-                            result: "fail",
-                            message: "Cannot obtain authority's public key. Authority is not registered with CA."
-                        });
-                    } else { 
-                        if (!Crypto.Rsa.verify(req.params.spaceList, record.publicKey, req.params.signature)) {
-                            res.statusCode = 400;
-                            res.json({
-                                result: "fail",
-                                message: "Signature cannot be verified by the server."
-                            });
-                        }
-                        else {
-                            updateAuthority(req.params.authorityId, req.params.spaceList, req.params.signature).then((result) => {
-                                res.json(result);
-                            });
-                        }
-                    }
-                });
-            }
-        });
-});
-*/
-
 // update space authority details
 app.post("/updateAuthority", (req, res) => {
+    console.log("HERE =====");
+    console.log(req.body.spaceList);
     // if no authority record found, do not update
     getAuthorityRecord(req.body.authorityId).then((record) => {
         if (!record) {
