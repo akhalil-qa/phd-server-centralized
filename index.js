@@ -559,6 +559,7 @@ app.post("/debug/sign", (req, res) => {
     try {
         res.send(Crypto.Rsa.sign(req.body.message, req.body.privateKey));
     } catch (e) {
+        res.statusCode = 400;
         res.send({
             result: "fail",
             message: "Signature generation failed."
