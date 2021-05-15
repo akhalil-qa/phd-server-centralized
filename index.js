@@ -689,10 +689,10 @@ app.post("/loginAuthority", (req, res) => {
 // update space authority details
 app.post("/updateAuthority", (req, res) => {
     console.log("=== recevied spaceList ===");
-    console.log(spaceList);
+    console.log(req.body.spaceList);
     console.log("=== parsed spaceList ===");
-    console.log(JSON.parse(spaceList));
-    
+    console.log(JSON.parse(req.body.spaceList));
+
     // if no authority record found, do not update
     getAuthorityRecord(req.body.authorityId).then((record) => {
         if (!record) {
@@ -721,6 +721,10 @@ app.post("/updateAuthority", (req, res) => {
                         });
                     }
                     else {
+                        console.log("=== I REACHED HERE ===");
+                        console.log(req.body.authorityId);
+                        console.log(req.body.spaceList);
+                        console.log(req.body.signature);
                         updateAuthority(req.body.authorityId, req.body.spaceList, req.body.signature).then((result) => {
                             res.json(result);
                         });
