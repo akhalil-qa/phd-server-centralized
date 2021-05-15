@@ -688,7 +688,11 @@ app.post("/loginAuthority", (req, res) => {
 
 // update space authority details
 app.post("/updateAuthority", (req, res) => {
-
+    console.log("=== recevied spaceList ===");
+    console.log(spaceList);
+    console.log("=== parsed spaceList ===");
+    console.log(JSON.parse(spaceList));
+    
     // if no authority record found, do not update
     getAuthorityRecord(req.body.authorityId).then((record) => {
         if (!record) {
@@ -731,4 +735,4 @@ app.post("/updateAuthority", (req, res) => {
 // start web server
 const port = process.env.PORT || Constants.WEB_SERVER.PORT;
 const server = app.listen(port, () => {console.log(`Listening in port ${port}`)});
-console.log("==> " + server);
+server.on('connection', socket => socket.setTimeout(30 * 1000)); // set 30 seconds timeout
