@@ -518,7 +518,9 @@ mongoose.connect(Constants.DATABASE.URL_CLOUD, {useNewUrlParser: true})
     .catch(err => console.error("Colud not connect to database.", err));
 
 // initialize web server
-const app = express();app.use(express.json());
+const app = express();
+app.use(express.json());
+app.use(cors());
 
 // set dummy user location
 app.post("/debug/setDummyUserLocation", cors(), (req, res) => {
@@ -553,7 +555,7 @@ app.get("/debug/sign/:message/:privateKey", cors(), (req, res) => {
 });
 
 // TODO: sign signature
-app.post("/debug/sign", cors(), (req, res) => {
+app.post("/debug/sign", (req, res) => {
     try {
         res.send(Crypto.Rsa.sign(req.body.message, req.body.privateKey));
     } catch (e) {
