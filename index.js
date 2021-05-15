@@ -525,30 +525,30 @@ app.use(cors());
 // set dummy user location
 app.post("/debug/setDummyUserLocation", (req, res) => {
     addLookupRecord("dummyUserLocation", {latitude:req.body.latitude, longitude:req.body.longitude, altitude:req.body.altitude});
-    res.send({response: "dummy user location is set"});
+    res.json({response: "dummy user location is set"});
     console.log("dummyUserLocation is set.");
 });
 
 // get dummy user location
 app.get("/debug/getDummyUserLocation", (req, res) => {
     getLookupRecord("dummyUserLocation").then((record) => {
-        res.send(record.value);
+        res.json(record.value);
     });
 });
 
 // generate keypair
 app.get("/debug/generateKeyPair", (req, res) => {
-    res.send(Crypto.Rsa.generateKeyPair());
+    res.json(Crypto.Rsa.generateKeyPair());
 });
 
 // sign signature
 app.get("/debug/sign/:message/:privateKey", (req, res) => {
     console.log("TODO: inside app.get(/debug/sign/:message/:privateKey)");
     try {
-        res.send(Crypto.Rsa.sign(req.params.message, req.params.privateKey));
+        res.json(Crypto.Rsa.sign(req.params.message, req.params.privateKey));
     } catch (e) {
         res.statusCode = 400;
-        res.send({
+        res.json({
             result: "fail",
             message: "Signature generation failed."
         });
@@ -558,10 +558,10 @@ app.get("/debug/sign/:message/:privateKey", (req, res) => {
 // TODO: sign signature
 app.post("/debug/sign", (req, res) => {
     try {
-        res.send(Crypto.Rsa.sign(req.body.message, req.body.privateKey));
+        res.json(Crypto.Rsa.sign(req.body.message, req.body.privateKey));
     } catch (e) {
         res.statusCode = 400;
-        res.send({
+        res.json({
             result: "fail",
             message: "Signature generation failed."
         });
@@ -571,12 +571,12 @@ app.post("/debug/sign", (req, res) => {
 // verify signature
 app.get("/debug/verify/:message/:publicKey/:signature", (req, res) => {
     try {
-        res.send({
+        res.json({
             result: Crypto.Rsa.verify(req.params.message, req.params.publicKey, req.params.signature)
         });
     } catch (e) {
         res.statusCode = 400;
-        res.send({
+        res.json({
             result: "fail",
             message: "Signature verification failed."
         });
@@ -586,12 +586,12 @@ app.get("/debug/verify/:message/:publicKey/:signature", (req, res) => {
 // TODO: verify signature
 app.post("/debug/verify", (req, res) => {
     try {
-        res.send({
+        res.json({
             result: Crypto.Rsa.verify(req.body.message, req.body.publicKey, req.body.signature)
         });
     } catch (e) {
         res.statusCode = 400;
-        res.send({
+        res.json({
             result: "fail",
             message: "Signature verification failed."
         });
@@ -602,26 +602,26 @@ app.post("/debug/verify", (req, res) => {
 app.get("/debug/clearDatabase", (req, res) => {
     clearAuthoritiesCollection();
     clearCertificateAuthorityRecordsCollection();
-    res.send("Authorities collection cleared.<br>CertificateAuthorityRecords collection cleared.");
+    res.json("Authorities collection cleared.<br>CertificateAuthorityRecords collection cleared.");
 });
 
 // populate database with initial data
 app.get("/debug/populateDatabase", (req, res) => {
     populateAuthoritiesCollection();
-    res.send("Database populated.");
+    res.json("Database populated.");
 });
 
 // get all CertificateAuthorityRecord records
 app.get("/debug/getCertificateAuthorityRecords", (req, res) => {
     getCertificateAuthorityRecords().then((records) => {
-        res.send(records);
+        res.json(records);
     });
 });
 
 // get database records updated after the supplied timestamp
 app.get("/getDatabaseUpdates/:timestamp", (req, res) => {
     getAuthoritiesDocumentsUpdates(req.params.timestamp).then((authorities) => {
-        res.send(authorities);
+        res.json(authorities);
     });
 });
 
@@ -632,13 +632,13 @@ app.get("/registerKey/:authorityId/:publicKey", (req, res) => {
     getCertificateAuthorityRecord(req.params.authorityId).then((record) => {
         if (record) {
             res.statusCode = 400;
-            res.send({
+            res.json({
                 result: "fail",
                 message: "Authority is already registered with CA."
             });
         } else {
             addCertificateAuthorityRecord(req.params.authorityId, req.params.publicKey);
-            res.send({response: "success"});
+            res.json({response: "success"});
         }
     });
  
@@ -651,13 +651,13 @@ app.post("/registerKey", (req, res) => {
     getCertificateAuthorityRecord(req.body.authorityId).then((record) => {
         if (record) {
             res.statusCode = 400;
-            res.send({
+            res.json({
                 result: "fail",
                 message: "Authority is already registered with CA."
             });
         } else {
             addCertificateAuthorityRecord(req.body.authorityId, req.body.publicKey);
-            res.send({response: "success"});
+            res.json({response: "success"});
         }
     });
  
@@ -669,7 +669,7 @@ app.get("/registerAuthority/:authorityId/:signature", (req, res) => {
     getAuthorityRecord(req.params.authorityId).then((record) => {
         if (record) {
             res.statusCode = 400;
-            res.send({
+            res.json({
                 result: "fail",
                 message: "Space authority is already registered in the server."
             });
@@ -678,7 +678,7 @@ app.get("/registerAuthority/:authorityId/:signature", (req, res) => {
                 // if record is not found in certificate authority database
                 if (!record) {
                     res.statusCode = 400;
-                    res.send({
+                    res.json({
                         result: "fail",
                         message: "Cannot obtain its public key from CA."
                     });
@@ -687,14 +687,14 @@ app.get("/registerAuthority/:authorityId/:signature", (req, res) => {
                     // if signature is not verified
                     if (!Crypto.Rsa.verify(req.params.authorityId, record.publicKey, req.params.signature)) {
                         res.statusCode = 400;
-                        res.send({
+                        res.json({
                             result: "fail",
                             message: "Signature cannot be verified by the server."
                         });
                     } else {
                         // add space authority to the database
                         addAuthority(req.params.authorityId, req.params.signature);
-                        res.send({result: "success"});
+                        res.json({result: "success"});
                     }
                 }
             });
@@ -708,7 +708,7 @@ app.post("/registerAuthority", (req, res) => {
     getAuthorityRecord(req.body.authorityId).then((record) => {
         if (record) {
             res.statusCode = 400;
-            res.send({
+            res.json({
                 result: "fail",
                 message: "Space authority is already registered in the server."
             });
@@ -717,7 +717,7 @@ app.post("/registerAuthority", (req, res) => {
                 // if record is not found in certificate authority database
                 if (!record) {
                     res.statusCode = 400;
-                    res.send({
+                    res.json({
                         result: "fail",
                         message: "Cannot obtain its public key from CA."
                     });
@@ -726,14 +726,14 @@ app.post("/registerAuthority", (req, res) => {
                     // if signature is not verified
                     if (!Crypto.Rsa.verify(req.body.authorityId, record.publicKey, req.body.signature)) {
                         res.statusCode = 400;
-                        res.send({
+                        res.json({
                             result: "fail",
                             message: "Signature cannot be verified by the server."
                         });
                     } else {
                         // add space authority to the database
                         addAuthority(req.body.authorityId, req.body.signature);
-                        res.send({result: "success"});
+                        res.json({result: "success"});
                     }
                 }
             });
@@ -747,7 +747,7 @@ app.get("/loginAuthority/:authorityId/:timestamp/:signature", (req, res) => {
     getAuthorityRecord(req.params.authorityId).then((record) => {
         if (!record) {
             res.statusCode = 400;
-            res.send({
+            res.json({
                 result: "fail",
                 message: "Authority is not found in the database."
             });
@@ -758,20 +758,20 @@ app.get("/loginAuthority/:authorityId/:timestamp/:signature", (req, res) => {
                 // if authority is not registered in CA, do not log in
                 if (!record) {
                     res.statusCode = 400;
-                    res.send({
+                    res.json({
                         result: "fail",
                         message: "Cannot obtain authority's public key. Authority is not registered with CA."
                     });
                 } else {
                     if (!Crypto.Rsa.verify(req.params.timestamp, record.publicKey, req.params.signature)) {
                         res.statusCode = 400;
-                        res.send({
+                        res.json({
                             result: "fail",
                             message: "Signature cannot be verified by the server."
                         });
                     } else {
                         getAuthorityRecord(req.params.authorityId).then((record) => {
-                            res.send(record);
+                            res.json(record);
                         });
                     }
                 }
@@ -786,7 +786,7 @@ app.post("/loginAuthority", (req, res) => {
     getAuthorityRecord(req.body.authorityId).then((record) => {
         if (!record) {
             res.statusCode = 400;
-            res.send({
+            res.json({
                 result: "fail",
                 message: "Authority is not found in the database."
             });
@@ -797,20 +797,20 @@ app.post("/loginAuthority", (req, res) => {
                 // if authority is not registered in CA, do not log in
                 if (!record) {
                     res.statusCode = 400;
-                    res.send({
+                    res.json({
                         result: "fail",
                         message: "Cannot obtain authority's public key. Authority is not registered with CA."
                     });
                 } else {
                     if (!Crypto.Rsa.verify(req.body.timestamp, record.publicKey, req.body.signature)) {
                         res.statusCode = 400;
-                        res.send({
+                        res.json({
                             result: "fail",
                             message: "Signature cannot be verified by the server."
                         });
                     } else {
                         getAuthorityRecord(req.body.authorityId).then((record) => {
-                            res.send(record);
+                            res.json(record);
                         });
                     }
                 }
@@ -826,7 +826,7 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", (req, res) => {
         getAuthorityRecord(req.params.authorityId).then((record) => {
             if (!record) {
                 res.statusCode = 400;
-                res.send({
+                res.json({
                     result: "fail",
                     message: "Authority is not found in the database."
                 });
@@ -837,21 +837,21 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", (req, res) => {
                     // if authority is not registered in CA, do not update
                     if (!record) {
                         res.statusCode = 400;
-                        res.send({
+                        res.json({
                             result: "fail",
                             message: "Cannot obtain authority's public key. Authority is not registered with CA."
                         });
                     } else { 
                         if (!Crypto.Rsa.verify(req.params.spaceList, record.publicKey, req.params.signature)) {
                             res.statusCode = 400;
-                            res.send({
+                            res.json({
                                 result: "fail",
                                 message: "Signature cannot be verified by the server."
                             });
                         }
                         else {
                             updateAuthority(req.params.authorityId, req.params.spaceList, req.params.signature).then((result) => {
-                                res.send(result);
+                                res.json(result);
                             });
                         }
                     }
@@ -866,7 +866,7 @@ app.post("/updateAuthority", (req, res) => {
     getAuthorityRecord(req.body.authorityId).then((record) => {
         if (!record) {
             res.statusCode = 400;
-            res.send({
+            res.json({
                 result: "fail",
                 message: "Authority is not found in the database."
             });
@@ -877,21 +877,21 @@ app.post("/updateAuthority", (req, res) => {
                 // if authority is not registered in CA, do not update
                 if (!record) {
                     res.statusCode = 400;
-                    res.send({
+                    res.json({
                         result: "fail",
                         message: "Cannot obtain authority's public key. Authority is not registered with CA."
                     });
                 } else { 
                     if (!Crypto.Rsa.verify(req.body.spaceList, record.publicKey, req.body.signature)) {
                         res.statusCode = 400;
-                        res.send({
+                        res.json({
                             result: "fail",
                             message: "Signature cannot be verified by the server."
                         });
                     }
                     else {
                         updateAuthority(req.body.authorityId, req.body.spaceList, req.body.signature).then((result) => {
-                            res.send(result);
+                            res.json(result);
                         });
                     }
                 }
