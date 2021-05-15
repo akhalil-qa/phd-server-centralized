@@ -53,9 +53,16 @@ const certificateAuthoritySchema = new mongoose.Schema({
     publicKey: String
 });
 
+// database schema: lookup
+const lookupSchema = new mongoose.Schema({
+    key: String,
+    value: Object
+});
+
 // database models
 const Authority = mongoose.model("Authority", authoritySchema);
 const CertificateAuthorityRecord = mongoose.model("CertificateAuthorityRecord", certificateAuthoritySchema);
+const Lookup = mongoose.model("Lookup", lookupSchema);
 
 /**************************************************/
 
@@ -478,9 +485,26 @@ async function removeRestriction(authorityId, spaceId, permission, appId, signat
 }
 */
 
+// add lookup document
+async function addLookupRecord(key, value) {
+    const lookup = new Lookup({
+        key: key,
+        value: value
+    });
+    await lookup.save();
+    console.log("Lookup " + key + ":" + value + " added.");
+}
+
+// get lookup document
+async function getLookupRecord(key) {
+    return await Lookup.findOne({key: key});
+}
+
+
+
 /**************************************************/
 
-/***********I********* SERVER *********************/
+/********************* SERVER *********************/
 
 // server key pair
 var serveyKeyPair = {
@@ -495,6 +519,20 @@ mongoose.connect(Constants.DATABASE.URL_CLOUD, {useNewUrlParser: true})
 
 // initialize web server
 const app = express();app.use(express.json());
+
+// set dummy user location
+app.post("/debug/setDummyUserLocation", cors(), (req, res) => {
+    addLookupRecord("dummyUserLocation", {latitude:req.body.latitude, longitude:req.body.longitude, altitude:req.body.altitude});
+    res.send({response: "dummy user location is set"});
+    console.log("dummyUserLocation is set.");
+});
+
+// get dummy user location
+app.get("/debug/getDummyUserLocation", cors(), (req, res) => {
+    getLookupRecord("dummyUserLocation").then((record) => {
+        res.send(record.value);
+    });
+});
 
 // generate keypair
 app.get("/debug/generateKeyPair", cors(), (req, res) => {
@@ -840,6 +878,7 @@ app.post("/updateAuthority", cors(), (req, res) => {
         }
     });
 });
+
 
 // start web server
 const port = process.env.PORT || Constants.WEB_SERVER.PORT;
