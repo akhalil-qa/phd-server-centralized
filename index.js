@@ -715,10 +715,6 @@ app.post("/updateAuthority", (req, res) => {
                         });
                     }
                     else {
-                        console.log("=== I REACHED HERE ===");
-                        console.log(req.body.authorityId);
-                        console.log(req.body.spaceList);
-                        console.log(req.body.signature);
                         updateAuthority(req.body.authorityId, JSON.parse(req.body.spaceList), req.body.signature).then((result) => {
                             res.json(result);
                         });
