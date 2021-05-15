@@ -500,8 +500,6 @@ async function getLookupRecord(key) {
     return await Lookup.findOne({key: key});
 }
 
-
-
 /**************************************************/
 
 /********************* SERVER *********************/
@@ -541,7 +539,8 @@ app.get("/debug/generateKeyPair", (req, res) => {
     res.json(Crypto.Rsa.generateKeyPair());
 });
 
-// sign signature
+// sign signature TO BE REMOVED
+/*
 app.get("/debug/sign/:message/:privateKey", (req, res) => {
     console.log("TODO: inside app.get(/debug/sign/:message/:privateKey)");
     try {
@@ -554,8 +553,9 @@ app.get("/debug/sign/:message/:privateKey", (req, res) => {
         });
     }
 });
+*/
 
-// TODO: sign signature
+// sign signature
 app.post("/debug/sign", (req, res) => {
     try {
         res.json(Crypto.Rsa.sign(req.body.message, req.body.privateKey));
@@ -568,7 +568,8 @@ app.post("/debug/sign", (req, res) => {
     }
 });
 
-// verify signature
+// verify signature TO BE REMOVED
+/*
 app.get("/debug/verify/:message/:publicKey/:signature", (req, res) => {
     try {
         res.json({
@@ -582,8 +583,9 @@ app.get("/debug/verify/:message/:publicKey/:signature", (req, res) => {
         });
     }
 });
+*/
 
-// TODO: verify signature
+// verify signature
 app.post("/debug/verify", (req, res) => {
     try {
         res.json({
@@ -625,7 +627,8 @@ app.get("/getDatabaseUpdates/:timestamp", (req, res) => {
     });
 });
 
-// register authority's public key with CA
+// register authority's public key with CA TO BE REMOVED
+/*
 app.get("/registerKey/:authorityId/:publicKey", (req, res) => {
     
     // if authority is already registered, do not register it again
@@ -643,8 +646,9 @@ app.get("/registerKey/:authorityId/:publicKey", (req, res) => {
     });
  
 });
+*/
 
-// TODO: register authority's public key with CA
+// register authority's public key with CA
 app.post("/registerKey", (req, res) => {
     
     // if authority is already registered, do not register it again
@@ -663,7 +667,8 @@ app.post("/registerKey", (req, res) => {
  
 });
 
-// register space authority
+// register space authority TO BE REMOVED
+/*
 app.get("/registerAuthority/:authorityId/:signature", (req, res) => {
     // if space authority is already registered, do not register it again
     getAuthorityRecord(req.params.authorityId).then((record) => {
@@ -701,8 +706,9 @@ app.get("/registerAuthority/:authorityId/:signature", (req, res) => {
         }
     });
 });
+*/
 
-// TODO: register space authority
+// register space authority
 app.post("/registerAuthority", (req, res) => {
     // if space authority is already registered, do not register it again
     getAuthorityRecord(req.body.authorityId).then((record) => {
@@ -741,7 +747,8 @@ app.post("/registerAuthority", (req, res) => {
     });
 });
 
-// space authority login
+// space authority login TO VE REMOVED
+/*
 app.get("/loginAuthority/:authorityId/:timestamp/:signature", (req, res) => {
     // if no authority record found, do not log in
     getAuthorityRecord(req.params.authorityId).then((record) => {
@@ -779,9 +786,10 @@ app.get("/loginAuthority/:authorityId/:timestamp/:signature", (req, res) => {
         }
     });
 });
+*/
 
-// TODO: space authority login
-app.post("/loginAuthority", (req, res) => {
+// space authority login
+app.post("/loginAuthority", cors(), (req, res) => {
     // if no authority record found, do not log in
     getAuthorityRecord(req.body.authorityId).then((record) => {
         if (!record) {
@@ -819,7 +827,8 @@ app.post("/loginAuthority", (req, res) => {
     });
 });
 
-// update space authority details
+// update space authority details TO BE REMOVED
+/*
 app.get("/updateAuthority/:authorityId/:spaceList/:signature", (req, res) => {
 
         // if no authority record found, do not update
@@ -859,8 +868,9 @@ app.get("/updateAuthority/:authorityId/:spaceList/:signature", (req, res) => {
             }
         });
 });
+*/
 
-// TODO: update space authority details
+// update space authority details
 app.post("/updateAuthority", (req, res) => {
     // if no authority record found, do not update
     getAuthorityRecord(req.body.authorityId).then((record) => {
