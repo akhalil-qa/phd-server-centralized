@@ -688,7 +688,7 @@ app.post("/loginAuthority", (req, res) => {
 
 // update space authority details
 app.post("/updateAuthority", (req, res) => {
-    
+
     // if no authority record found, do not update
     getAuthorityRecord(req.body.authorityId).then((record) => {
         if (!record) {
@@ -730,4 +730,5 @@ app.post("/updateAuthority", (req, res) => {
 
 // start web server
 const port = process.env.PORT || Constants.WEB_SERVER.PORT;
-app.listen(port, () => {console.log(`Listening in port ${port}`)});
+const server = app.listen(port, () => {console.log(`Listening in port ${port}`)});
+console.log("==> " + server);
