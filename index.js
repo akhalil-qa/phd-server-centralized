@@ -307,8 +307,14 @@ async function updateAuthority(id, spaceList, signature) {
 
     // update delegation details
     for (var i = 0; i < spaceList.length; i++) {
-        console.log(i + " ==> " + spaceList[i].space.id);
-        console.log(i + " ==> " + spaceList[i].delegations.length);
+        for (var j = 0; j < spaceList.delegations.length; j++) {
+            var spaceId = spaceList[i].space.id;
+            var delegatorId = spaceList[i].delegations[j].delegator;
+
+            console.log(" ==> " + spaceId);
+            console.log(" ==> " + delegatorId);
+
+        }
     }
 
 
