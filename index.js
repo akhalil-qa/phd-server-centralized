@@ -303,8 +303,15 @@ async function addAuthority(id, signature) {
 }
 
 // update authority document
-// spaceList supplied must be stringified json object
 async function updateAuthority(id, spaceList, signature) {
+
+    // update delegation details
+    for (var i = 0; i < spaceList.length; i++) {
+        console.log(i + " ==> " + spaceList[i].space.id);
+        console.log(i + " ==> " + spaceList[i].delegations.length);
+    }
+
+
     const authority = await Authority.findOne({id: id});
     authority.spaceList = spaceList;
     authority.signature = signature;
