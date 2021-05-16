@@ -304,20 +304,6 @@ async function addAuthority(id, signature) {
 
 // update authority document
 async function updateAuthority(id, spaceList, signature) {
-
-    // update delegation details
-    for (var i = 0; i < spaceList.length; i++) {
-        for (var j = 0; j < spaceList[i].delegations.length; j++) {
-            var spaceId = spaceList[i].space.id;
-            var delegatorId = spaceList[i].delegations[j].delegator;
-
-            console.log(" ==> " + spaceId);
-            console.log(" ==> " + delegatorId);
-
-        }
-    }
-
-
     const authority = await Authority.findOne({id: id});
     authority.spaceList = spaceList;
     authority.signature = signature;
