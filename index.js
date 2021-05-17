@@ -477,11 +477,18 @@ async function removeRestriction(authorityId, spaceId, permission, appId, signat
 */
 
 // add lookup document
+// if lookup key is already exists, it will be updated with the new value
 async function addLookupRecord(key, value) {
-    const lookup = new Lookup({
-        key: key,
-        value: value
-    });
+    var lookup = await Lookup.findOne({key: key});
+    if (lookup) {
+        lookup.value = value;
+    }
+    else {
+        lookup = new Lookup({
+            key: key,
+            value: value
+        });
+    }
     await lookup.save();
     console.log("Lookup " + key + ":" + value + " added.");
 }
@@ -521,7 +528,12 @@ app.post("/debug/setDummyUserLocation", (req, res) => {
 // get dummy user location
 app.get("/debug/getDummyUserLocation", (req, res) => {
     getLookupRecord("dummyUserLocation").then((record) => {
-        res.json(record.value);
+        if(!record) {
+            res.json(null);
+        }
+        else {
+            res.json(record.value);
+        }
     });
 });
 
