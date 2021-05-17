@@ -3,7 +3,7 @@ const Constants = {
     WEB_SERVER: {
         NAME: "server",
         BASE_URL: "https://hidden-garden-57594.herokuapp.com",
-        PORT: 5577
+        PORT: 5599
     },
 
     DATABASE: {

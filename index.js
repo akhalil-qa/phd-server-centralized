@@ -529,9 +529,10 @@ app.post("/debug/setDummyUserLocation", (req, res) => {
 app.get("/debug/getDummyUserLocation", (req, res) => {
     getLookupRecord("dummyUserLocation").then((record) => {
         if(!record) {
-            res.json(null);
+            res.json({status: "inactive"});
         }
         else {
+            record.value.status = "active";
             res.json(record.value);
         }
     });
