@@ -38,8 +38,8 @@ const Crypto  = {
             var signature = signer.sign(privateKey, "base64");
             var endTime = performance.now(); // AHMED: remove after performance evaluation
             var timeDiff = endTime - startTime; // AHMED: remove after performance evaluation
-            return timeDiff; // AHMED: remove after performance evaluation
-            //return signature; // AHMED: remove after performance evaluation
+            console.log("signature generation: " + timeDiff); // AHMED: remove after performance evaluation
+            return signature;
         },
 
         // verify the supplied signature (passed in base64 format)
