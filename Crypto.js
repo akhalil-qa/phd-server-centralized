@@ -32,7 +32,7 @@ const Crypto  = {
     
         // generate signature in a base64 format
         sign: function(message, privateKey) {
-            //var startTime = performance.now(); // AHMED: remove after performance evaluation
+            var startTime = performance.now(); // AHMED: remove after performance evaluation
             var signer = crypto.createSign(Constants.CRYPTO.RSA.SIGNATURE_ALGORITHM);
             signer.update(message);
             var signature = signer.sign(privateKey, "base64");
