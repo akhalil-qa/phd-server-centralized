@@ -2,13 +2,13 @@ const Constants = {
 
     WEB_SERVER: {
         NAME: "server",
-        BASE_URL: "https://hidden-garden-57594.herokuapp.com",
+        BASE_URL: "SECRET",
         PORT: 5599
     },
 
     DATABASE: {
-        URL_LOCAL: "mongodb://localhost/spacemanager",
-        URL_CLOUD: "mongodb+srv://admin:admin@spacemanagercluster.qypnu.mongodb.net/spacemanager?retryWrites=true&w=majority"
+        URL_LOCAL: "SECRET",
+        URL_CLOUD: "SECRET"
     },
 
     CRYPTO: {
